@@ -8,9 +8,9 @@ import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { CommonService } from 'src/app/services/common.service';
 import {
-    FormArray,
-    FormBuilder,
-    FormGroup,
+    UntypedFormArray,
+    UntypedFormBuilder,
+    UntypedFormGroup,
     Validators,
     AbstractControl,
 } from '@angular/forms';
@@ -26,13 +26,13 @@ import { randomAvatarUrlGenerator } from 'src/app/modules/auth/utils/auth.util';
     animations: [fadeInOut],
 })
 export class ContactFormPage implements OnInit {
-    addContactForm: FormGroup;
+    addContactForm: UntypedFormGroup;
     statuses: Contactstatus[] = ['active', 'inactive'];
     mode: string;
     constructor(
         private _common: CommonService,
         private _location: Location,
-        private _fb: FormBuilder,
+        private _fb: UntypedFormBuilder,
         private _toastr: ToastService,
         private _router: Router,
         private _route: ActivatedRoute,
@@ -89,8 +89,8 @@ export class ContactFormPage implements OnInit {
         }
     }
 
-    get contacts(): FormArray {
-        return this.addContactForm.get('contacts') as FormArray;
+    get contacts(): UntypedFormArray {
+        return this.addContactForm.get('contacts') as UntypedFormArray;
     }
 
     async submit(): Promise<void> {
