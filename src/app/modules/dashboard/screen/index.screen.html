@@ -1,6 +1,4 @@
-<main
-    class="w-full h-screen md:text-lg bg-base-200 overflow-hidden text-sm mx-auto"
->
+<main class="w-full md:text-lg bg-base-200 overflow-hidden text-sm mx-auto">
     <header>
         <nav class="navbar bg-base-100 h-10 md:h-20">
             <div class="navbar-start">
@@ -84,6 +82,15 @@
                         [routerLinkActiveOptions]="{ exact: true }"
                         routerLinkActive="border-l-primary border-l-2 bg-base-200"
                         >Profile</a
+                    >
+                </li>
+                <li>
+                    <a
+                        (click)="closeSidebar()"
+                        routerLink="/dashboard/files"
+                        [routerLinkActiveOptions]="{ exact: true }"
+                        routerLinkActive="border-l-primary border-l-2 bg-base-200"
+                        >Files</a
                     >
                 </li>
                 <li>

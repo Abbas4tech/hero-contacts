@@ -1,12 +1,12 @@
-import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
-import { IndexProfileScreen } from './screen/index.screen';
+import { Router, RouterModule, Routes } from '@angular/router';
+import { UserFilesScreen } from './screens/index.screen';
 
 const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
-        component: IndexProfileScreen,
+        component: UserFilesScreen,
     },
 ];
 
@@ -15,6 +15,6 @@ const routes: Routes = [
     imports: [RouterModule.forChild(routes)],
     exports: [RouterModule],
 })
-export class ProfileRoutingModule {
+export class UserFilesRoutingModule {
     constructor() {}
 }

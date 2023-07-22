@@ -1,0 +1,20 @@
+<article @fade class="p-2">
+    <section
+        class="flex item h-12 md:h-16 gap-4 items-center md:px-2 md:pb-4 px-1 pb-2"
+    >
+        <p
+            class="text-3xl cursor-pointer tooltip tooltip-bottom"
+            data-tip="Back"
+        >
+            <
+        </p>
+        <h1 class="text-base md:text-xl font-bold">My Files</h1>
+    </section>
+    <hr />
+
+    <ng-container *ngFor="let image of images">
+        <img [src]="image" alt="" />
+        {{image}}
+        <a [href]="image" download target="_blank">Download</a>
+    </ng-container>
+</article>
