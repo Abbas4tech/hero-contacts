@@ -22,3 +22,7 @@ body {
     margin: 0;
     font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
+
+.drawer-content {
+    height: calc(100vh - 4rem);
+}

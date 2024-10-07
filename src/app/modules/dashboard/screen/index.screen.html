@@ -52,7 +52,7 @@
     </header>
     <div class="drawer drawer-mobile">
         <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
-        <div class="drawer-content p-2 md:p-4">
+        <div class="drawer-content p-2 md:p-4 overflow-auto scrollbar-hide">
             <ng-container *ngIf="contentLoaded; else loader">
                 <router-outlet></router-outlet>
             </ng-container>
