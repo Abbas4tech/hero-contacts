@@ -74,7 +74,6 @@
                         routerLink="/dashboard/contacts"
                         class="px-4 !rounded-none w-full flex gap-2 items-center transform duration-200 ease-out"
                         routerLinkActive="border-primary border-l-4 bg-base-200 font-bold"
-                        [routerLinkActiveOptions]="{ exact: true }"
                         >Contacts</a
                     >
                 </li>
@@ -89,6 +88,17 @@
                         >Profile</a
                     >
                 </li>
+
+                <li class="py-1 pr-2 cursor-pointer">
+                    <a
+                        (click)="closeSidebar()"
+                        routerLink="/dashboard/files"
+                        class="px-4 !rounded-none w-full flex gap-2 items-center transform duration-200 ease-out"
+                        routerLinkActive="border-primary border-l-4 bg-base-200 font-bold"
+                        >Files</a
+                    >
+                </li>
+
                 <li class="py-1 pr-2 cursor-pointer">
                     <button class="!rounded-none" (click)="logout()">
                         Signout

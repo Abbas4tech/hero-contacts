@@ -17,7 +17,7 @@ export class UserFilesScreen implements OnInit {
     user: User;
     images: string[] = [];
     constructor(private _auth: AuthService, private _storage: Storage) {
-        this._auth.user.subscribe((user) => (this.user = user));
+        this.user = this._auth.user.getValue();
     }
     async ngOnInit() {
         const results = await list(ref(this._storage, `${this.user.uid}`), {
