@@ -6,7 +6,7 @@ export type TStoFix = any;
 /**
  * Theme type selector for storing and checking the theme
  */
-export type Theme = 'light' | 'coffee' | 'dracula';
+export type Theme = 'light' | 'night';
 
 export enum COMMONENUM {
     THEME = 'theme',

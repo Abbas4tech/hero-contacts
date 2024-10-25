@@ -21,6 +21,7 @@ import {
     throwError,
     Observable,
 } from 'rxjs';
+import { BrowserStorageService } from 'src/app/services/storage.service';
 import { ToastService } from 'src/app/services/toaster.service';
 
 @Injectable({
@@ -32,11 +33,13 @@ export class AuthService {
         private _auth: Auth,
         private _toastr: ToastService,
         private _router: Router,
-        private _provider: GoogleAuthProvider
+        private _provider: GoogleAuthProvider,
+        private _browserStorage: BrowserStorageService
     ) {
         this._auth.onAuthStateChanged((user) => {
             if (user) {
                 this.user.next(user);
+                this._browserStorage.set('userId', user.uid);
             }
         });
     }
@@ -57,6 +60,7 @@ export class AuthService {
                 photoURL: randomAvatarUrlGenerator(),
             });
             this.user.next(userCreds.user);
+            this._browserStorage.set('userId', userCreds.user.uid);
             this._router.navigate(['dashboard/contacts']);
             this._toastr.success(`Logged In as ${this.user.value.displayName}`);
         } catch (err) {
@@ -71,7 +75,10 @@ export class AuthService {
     signInWithGoogle(): Observable<User> {
         return from(signInWithPopup(this._auth, this._provider)).pipe(
             map(({ user }) => user),
-            tap((data) => this.user.next(data)),
+            tap((data) => {
+                this.user.next(data);
+                this._browserStorage.set('userId', data.uid);
+            }),
             catchError((err: FirebaseError) => throwError(err))
         );
     }
@@ -90,6 +97,7 @@ export class AuthService {
         try {
             await signOut(this._auth);
             this.user.next(null);
+            this._browserStorage.clean('userId');
             this._router.navigate(['auth']);
             this._toastr.success('Loggedout successfully');
         } catch (error) {
