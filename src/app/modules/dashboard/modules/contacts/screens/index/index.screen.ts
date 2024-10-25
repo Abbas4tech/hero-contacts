@@ -36,7 +36,7 @@ export class ContactsIndexScreen implements OnInit, OnDestroy {
         this.subs = this._contactService
             .getContacts()
             .subscribe((data) => (this.list = data));
-
+        this.subscriptions.push(this.subs);
         this.subscriptions.push(
             this._layout.selectedCards.subscribe((cards) => {
                 this.cards = cards;

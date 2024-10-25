@@ -43,10 +43,9 @@ export class ContactCardComponent implements OnDestroy {
                 } else {
                     this.isMultiSelected = false;
                 }
-            }),
-
-            this._auth.user.subscribe((user) => (this.user = user))
+            })
         );
+        this.user = this._auth.user.getValue();
     }
 
     onMultiSelect(event: Event): void {
