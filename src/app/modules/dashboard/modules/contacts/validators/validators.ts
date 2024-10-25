@@ -4,7 +4,6 @@ export const descriptionValidator = (
     control: FormControl
 ): ValidationErrors => {
     const description = <string>control.value;
-    console.log(description.split(' ').length);
     if (description.split(' ').length >= 5) {
         return null;
     } else {

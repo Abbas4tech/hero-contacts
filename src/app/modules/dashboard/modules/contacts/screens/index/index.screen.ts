@@ -73,7 +73,6 @@ export class ContactsIndexScreen implements OnInit, OnDestroy {
                 this.cards.splice(index, 1);
             }
         }
-        console.log(this.cards);
         this._layout.selectedCards.next(this.cards);
     }
 

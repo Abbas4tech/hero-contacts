@@ -59,7 +59,6 @@ export class ContactCardComponent implements OnDestroy {
         event.stopPropagation();
         this._router.navigate(['view'], {
             queryParams: {
-                user: this.user.uid,
                 id,
             },
             relativeTo: this._route,
@@ -72,7 +71,6 @@ export class ContactCardComponent implements OnDestroy {
             relativeTo: this._route,
             queryParams: {
                 [ContactsQueryParams.MODE]: ContactsQueryParams.EDIT,
-                user: this.user.uid,
                 id,
             },
             queryParamsHandling: 'merge',
