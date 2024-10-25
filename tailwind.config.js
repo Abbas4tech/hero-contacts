@@ -20,6 +20,6 @@ module.exports = {
         },
     ],
     daisyui: {
-        themes: ['light', 'dracula'],
+        themes: ['light', 'night'],
     },
 };

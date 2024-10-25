@@ -4,7 +4,7 @@ import { CommonService } from 'src/app/services/common.service';
 import { Theme, TStoFix } from 'src/app/types/common-types';
 
 enum THEMES {
-    DARCULA = 'dracula',
+    NIGHT = 'night',
     LIGHT = 'light',
 }
 @Component({
@@ -25,7 +25,7 @@ export class ThemeToggler implements OnDestroy {
         if (!event.target.checked) {
             this._common.setTheme(THEMES.LIGHT);
         } else {
-            this._common.setTheme(THEMES.DARCULA);
+            this._common.setTheme(THEMES.NIGHT);
         }
     }
     ngOnDestroy(): void {
