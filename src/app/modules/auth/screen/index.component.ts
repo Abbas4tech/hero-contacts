@@ -13,6 +13,7 @@ import { COMMONENUM, Theme } from 'src/app/types/common-types';
 import { fadeInOut } from '../../shared/animations/shared.animations';
 import { AuthService } from '../services/auth.service';
 import { SeoService } from 'src/app/services/seo.service';
+import { errorGenerator } from '../utils/auth.util';
 
 @Component({
     selector: 'index',
@@ -84,7 +85,8 @@ export class IndexComponent implements OnInit, OnDestroy {
                 },
                 error: (err) => {
                     this.isLoading = false;
-                    this._toastr.error(err.message);
+                    console.log(err.message);
+                    this._toastr.error(errorGenerator(err.message));
                 },
                 complete: () => {},
             })
@@ -112,7 +114,7 @@ export class IndexComponent implements OnInit, OnDestroy {
                 },
                 error: (err) => {
                     this.isLoading = false;
-                    this._toastr.error(err.message);
+                    this._toastr.error(errorGenerator(err.message));
                     this.authForm.reset();
                 },
             })
@@ -127,6 +129,7 @@ export class IndexComponent implements OnInit, OnDestroy {
             this.isLoading = false;
         } catch (err) {
             console.error(err);
+            this._toastr.error(errorGenerator(err.message));
             this.isLoading = false;
         }
     }

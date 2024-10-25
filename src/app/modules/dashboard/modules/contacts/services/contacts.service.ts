@@ -29,7 +29,7 @@ export class ContactService {
         private _fire: Firestore,
         private _toastr: ToastService
     ) {
-        this._auth.user.subscribe((user) => (this.user = user));
+        this.user = this._auth.user.getValue();
     }
 
     getContacts(): Observable<Contact[]> {

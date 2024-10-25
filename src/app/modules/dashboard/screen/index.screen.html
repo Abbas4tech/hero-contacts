@@ -1,5 +1,9 @@
-<main class="w-full md:text-lg bg-base-200 overflow-hidden text-sm mx-auto">
-    <header>
+<main
+    class="w-full h-screen md:text-lg container bg-base-100 overflow-hidden text-sm mx-auto"
+>
+    <header
+        class="sticky top-0 z-30 shadow-lg shadow-base-300 text-base-content"
+    >
         <nav class="navbar bg-base-100 h-10 md:h-20">
             <div class="navbar-start">
                 <label
@@ -50,7 +54,7 @@
     </header>
     <div class="drawer drawer-mobile">
         <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
-        <div class="drawer-content p-2 md:p-4">
+        <div class="drawer-content p-2 md:p-4 overflow-auto scrollbar-hide">
             <ng-container *ngIf="contentLoaded; else loader">
                 <router-outlet></router-outlet>
             </ng-container>
@@ -62,39 +66,31 @@
                 id="overlay"
             ></label>
             <ul
-                class="menu p-4 lg:w-40 md:w-80 gap-2 xl:w-80 w-[80%] bg-base-100 text-base-content"
+                class="menu pt-4 lg:w-40 md:w-80 gap-2 xl:w-80 w-[80%] bg-base-300 text-base-content"
             >
-                <li>
+                <li class="py-1 pr-2 cursor-pointer">
                     <a
                         (click)="closeSidebar()"
-                        class="rounded-none"
                         routerLink="/dashboard/contacts"
-                        routerLinkActive="border-l-primary border-l-2 bg-base-200"
+                        class="px-4 !rounded-none w-full flex gap-2 items-center transform duration-200 ease-out"
+                        routerLinkActive="border-primary border-l-4 bg-base-200 font-bold"
                         [routerLinkActiveOptions]="{ exact: true }"
                         >Contacts</a
                     >
                 </li>
 
-                <li>
+                <li class="py-1 pr-2 cursor-pointer">
                     <a
                         (click)="closeSidebar()"
                         routerLink="/dashboard/profile"
                         [routerLinkActiveOptions]="{ exact: true }"
-                        routerLinkActive="border-l-primary border-l-2 bg-base-200"
+                        class="px-4 !rounded-none w-full flex gap-2 items-center transform duration-200 ease-out"
+                        routerLinkActive="border-primary border-l-4 bg-base-200 font-bold"
                         >Profile</a
                     >
                 </li>
-                <li>
-                    <a
-                        (click)="closeSidebar()"
-                        routerLink="/dashboard/files"
-                        [routerLinkActiveOptions]="{ exact: true }"
-                        routerLinkActive="border-l-primary border-l-2 bg-base-200"
-                        >Files</a
-                    >
-                </li>
-                <li>
-                    <button class="rounded-none" (click)="logout()">
+                <li class="py-1 pr-2 cursor-pointer">
+                    <button class="!rounded-none" (click)="logout()">
                         Signout
                     </button>
                 </li>

@@ -1,8 +1,13 @@
-import { FirebaseLoginError, FirebaseErrorMessage } from './auth.enums';
+import { FirebaseLoginError, Message } from './auth.enums';
 export const errorGenerator = (message: string): string => {
-    switch (message) {
+    const msg = message.match(/\(([^)]+)\)/);
+    switch (msg[1]) {
         case FirebaseLoginError.EMAIL_ALREADY_EXIST:
-            return FirebaseErrorMessage.EMAIL_EXISTS;
+            return Message.EMAIL_ALREADY_EXIST;
+        case FirebaseLoginError.INVALID_EMAIL_OR_PASSWORD:
+            return Message.INVALID_EMAIL_OR_PASSWORD;
+        case FirebaseLoginError.POPUP_CLOSED:
+            return Message.POPUP_CLOSED;
         default:
             return message;
     }

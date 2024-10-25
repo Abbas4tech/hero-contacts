@@ -78,7 +78,7 @@ export class ContactFormPage implements OnInit {
             this._route.snapshot.queryParams[ContactsQueryParams.MODE] ===
             ContactsQueryParams.EDIT
         ) {
-            const data: Contact = this._route.snapshot.data['formData'];
+            const data = this._route.snapshot.data['formData'] as Contact;
             this.addContactForm.setValue({
                 id: data.id,
                 photoUrl: data.photoUrl,
@@ -104,12 +104,12 @@ export class ContactFormPage implements OnInit {
                 ContactsQueryParams.EDIT
             ) {
                 await this._conatctSer.updateContact(
-                    this.addContactForm.value.id,
-                    this.addContactForm.value
+                    this.addContactForm.value.id as string,
+                    this.addContactForm.value as Contact
                 );
             } else {
                 const data = { ...this.addContactForm.value } as Contact;
-                this._conatctSer.addContact(data);
+                await this._conatctSer.addContact(data);
             }
         } catch (err) {
             console.error(err);

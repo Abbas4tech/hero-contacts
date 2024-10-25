@@ -4,8 +4,22 @@ module.exports = {
     theme: {
         extend: {},
     },
-    plugins: [require('daisyui')],
+    plugins: [
+        require('daisyui'),
+        function ({ addUtilities }) {
+            const newUtilities = {
+                '.scrollbar-hide': {
+                    '-ms-overflow-style': 'none' /* IE */,
+                    'scrollbar-width': 'none' /* Firefox */,
+                },
+                '.scrollbar-hide::-webkit-scrollbar': {
+                    display: 'none' /* Chrome, Safari */,
+                },
+            };
+            addUtilities(newUtilities);
+        },
+    ],
     daisyui: {
-        themes: ['light', 'dracula'],
+        themes: ['light', 'night'],
     },
 };
