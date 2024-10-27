@@ -12,9 +12,20 @@
     </section>
     <hr />
 
+    <input
+        type="file"
+        (change)="detectFiles($event)"
+        class="file-input w-full max-w-xs"
+    />
+
+    <button class="btn btn-primary" (click)="uploadSingleFile()">Upload</button>
+
     <ng-container *ngFor="let image of images">
-        <img [src]="image" alt="" />
-        {{image}}
         <a [href]="image" download target="_blank">Download</a>
+        <div class="avatar">
+            <div class="w-24 rounded">
+                <img [src]="image" />
+            </div>
+        </div>
     </ng-container>
 </article>

@@ -1,13 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '@angular/fire/auth';
-import {
-    list,
-    ref,
-    getDownloadURL,
-    Storage,
-    getBlob,
-} from '@angular/fire/storage';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
+import { Upload } from '../services/upload';
+import { UploadService } from '../services/upload.service';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
 
 @Component({
     selector: 'hero-drive',
@@ -16,17 +12,37 @@ import { AuthService } from 'src/app/modules/auth/services/auth.service';
 export class UserFilesScreen implements OnInit {
     user: User;
     images: string[] = [];
-    constructor(private _auth: AuthService, private _storage: Storage) {
+    selectedFiles: FileList;
+    currentUpload: Upload;
+    constructor(
+        private _auth: AuthService,
+        private _storage: AngularFireStorage,
+        private _uploadService: UploadService
+    ) {
         this.user = this._auth.user.getValue();
     }
+
     async ngOnInit() {
-        const results = await list(ref(this._storage, `${this.user.uid}`), {
-            maxResults: 10,
-        });
+        const folderRef = this._storage.storage
+            .ref()
+            .child(`${this.user.email}`);
+        const allFiles = await folderRef.listAll();
         const urls = await Promise.all(
-            results.items.map((item) => getDownloadURL(item))
+            allFiles.items.map(
+                async (fileRef) => await fileRef.getDownloadURL()
+            )
         );
-        console.log(urls);
         this.images = urls;
+    }
+
+    detectFiles(e) {
+        this.selectedFiles = e.target.files;
+        console.log('Preview', this.selectedFiles);
+    }
+
+    uploadSingleFile() {
+        const file = this.selectedFiles.item(0);
+        this.currentUpload = new Upload(file);
+        this._uploadService.pushUpload(this.currentUpload);
     }
 }
