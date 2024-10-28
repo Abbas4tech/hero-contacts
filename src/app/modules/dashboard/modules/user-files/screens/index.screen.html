@@ -12,20 +12,84 @@
     </section>
     <hr />
 
+    <storage-meter [files]="files.getValue()"></storage-meter>
+
     <input
         type="file"
         (change)="detectFiles($event)"
         class="file-input w-full max-w-xs"
     />
 
-    <button class="btn btn-primary" (click)="uploadSingleFile()">Upload</button>
-
-    <ng-container *ngFor="let image of images">
-        <a [href]="image" download target="_blank">Download</a>
-        <div class="avatar">
-            <div class="w-24 rounded">
-                <img [src]="image" />
-            </div>
-        </div>
-    </ng-container>
+    <button
+        class="btn btn-primary"
+        [disabled]="!selectedFiles"
+        (click)="uploadSingleFile()"
+    >
+        Upload
+    </button>
+    <div class="overflow-x-auto w-full">
+        <table class="table w-full">
+            <thead>
+                <tr>
+                    <th>
+                        <label>
+                            <input type="checkbox" class="checkbox" />
+                        </label>
+                    </th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Favorite Color</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- row 1 -->
+                <ng-container
+                    *ngFor="let metaData of files.asObservable() | async"
+                >
+                    <tr>
+                        <th>
+                            <label>
+                                <input type="checkbox" class="checkbox" />
+                            </label>
+                        </th>
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <div class="avatar">
+                                    <div class="mask mask-squircle h-12 w-12">
+                                        <img
+                                            [src]="metaData.url"
+                                            [alt]="metaData.name"
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="font-bold">
+                                        {{metaData.name}}
+                                    </div>
+                                    <div class="text-sm opacity-50">
+                                        {{metaData.timeCreated}}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge badge-ghost badge-sm md:badge-md"
+                                >{{metaData.contentType}}</span
+                            >
+                        </td>
+                        <td>{{metaData.updated}}</td>
+                        <th>
+                            <button
+                                (click)="downloadFile(metaData.fullPath)"
+                                class="btn btn-ghost btn-xs"
+                            >
+                                details
+                            </button>
+                        </th>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
 </article>

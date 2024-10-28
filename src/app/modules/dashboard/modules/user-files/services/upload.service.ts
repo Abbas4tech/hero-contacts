@@ -1,48 +1,58 @@
-import { Injectable } from '@angular/core';
-import {
-    AngularFireStorage,
-    createUploadTask,
-} from '@angular/fire/compat/storage';
+import { Injectable, OnInit } from '@angular/core';
 import { Upload } from './upload';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { ToastService } from 'src/app/services/toaster.service';
+import {
+    FirebaseStorage,
+    getDownloadURL,
+    getStorage,
+    ref,
+    StorageReference,
+    uploadBytesResumable,
+} from '@angular/fire/storage';
+import { initializeApp } from '@firebase/app';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root',
 })
-export class UploadService {
-    constructor(
-        private _fireStorage: AngularFireStorage,
-        private _toastr: ToastService,
-        private _auth: AuthService
-    ) {}
+export class UploadService implements OnInit {
+    storage: FirebaseStorage;
+    fileReference: StorageReference;
+    constructor(private _toastr: ToastService, private _auth: AuthService) {
+        this.storage = getStorage(initializeApp(environment.firebaseConfig));
+    }
 
     private _basePath = `${this._auth.user.value.email}`;
 
     pushUpload(upload: Upload) {
-        const storageRef = this._fireStorage.storage.ref();
-        const uplaodTask = storageRef
-            .child(`${this._basePath}/${upload.file.name}`)
-            .put(upload.file);
-
-        createUploadTask(uplaodTask)
-            .snapshotChanges()
-            .subscribe({
-                next: (value) => {
-                    upload.progress =
-                        (value.bytesTransferred / value.totalBytes) * 100;
-                },
-                error: (err) => {
-                    console.error(err);
-                    this._toastr.error(err.message);
-                },
-                complete: async () => {
-                    upload.url = await uplaodTask.snapshot.ref.getDownloadURL();
-                    upload.name = upload.file.name;
-                    this._toastr.success(
-                        `Successfully Uploaded ${upload.file.name} !!`
-                    );
-                },
-            });
+        this.fileReference = ref(
+            this.storage,
+            `${this._basePath}/${upload.file.name}`
+        );
+        const uploadItem = uploadBytesResumable(
+            this.fileReference,
+            upload.file
+        );
+        uploadItem.on(
+            'state_changed',
+            (snapshot) => {
+                upload.progress =
+                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            },
+            (err) => {
+                console.error(err);
+                this._toastr.error(err.message);
+            },
+            async () => {
+                upload.url = await getDownloadURL(uploadItem.snapshot.ref);
+                upload.name = upload.file.name;
+                this._toastr.success(
+                    `Successfully Uploaded ${upload.file.name} !!`
+                );
+            }
+        );
     }
+
+    ngOnInit(): void {}
 }
