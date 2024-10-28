@@ -12,7 +12,7 @@
     </section>
     <hr />
 
-    <storage-meter [files]="files.getValue()"></storage-meter>
+    <storage-meter></storage-meter>
 
     <input
         type="file"
@@ -20,13 +20,7 @@
         class="file-input w-full max-w-xs"
     />
 
-    <button
-        class="btn btn-primary"
-        [disabled]="!selectedFiles"
-        (click)="uploadSingleFile()"
-    >
-        Upload
-    </button>
+    <button class="btn btn-primary" (click)="uploadSingleFile()">Upload</button>
     <div class="overflow-x-auto w-full">
         <table class="table w-full">
             <thead>
@@ -38,15 +32,13 @@
                     </th>
                     <th>Name</th>
                     <th>Type</th>
-                    <th>Favorite Color</th>
+                    <th>Updated At</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
                 <!-- row 1 -->
-                <ng-container
-                    *ngFor="let metaData of files.asObservable() | async"
-                >
+                <ng-container *ngFor="let metaData of files">
                     <tr>
                         <th>
                             <label>
@@ -80,10 +72,7 @@
                         </td>
                         <td>{{metaData.updated}}</td>
                         <th>
-                            <button
-                                (click)="downloadFile(metaData.fullPath)"
-                                class="btn btn-ghost btn-xs"
-                            >
+                            <button class="btn btn-ghost btn-xs">
                                 details
                             </button>
                         </th>
