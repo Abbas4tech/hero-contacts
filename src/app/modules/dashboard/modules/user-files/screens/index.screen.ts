@@ -41,4 +41,8 @@ export class UserFilesScreen implements OnInit, OnDestroy {
     trackByFileName(index: number, file: StorageFile): string {
         return file.name;
     }
+
+    async deleteFile(path: string) {
+        await this._uploadService.deleteFile(path);
+    }
 }

@@ -3,6 +3,7 @@ import { Upload } from './upload';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { ToastService } from 'src/app/services/toaster.service';
 import {
+    deleteObject,
     FirebaseStorage,
     getDownloadURL,
     getMetadata,
@@ -98,9 +99,26 @@ export class StorageService implements OnInit {
         return this.formatBytes(this.maxBucketSizeInBytes);
     }
 
+    checkIfBucketHasStorageCapacity(sizeToUplaod: number) {
+        const currentConsumption =
+            this.storageState.getValue().totalConsumption;
+        const availableSize = this.maxBucketSizeInBytes - currentConsumption;
+        console.log(availableSize);
+        return availableSize >= sizeToUplaod;
+    }
+
     uploadSingleFile(): void {
         const file = this.selectedFiles?.item(0);
         if (file) {
+            const haveEnoughStorage = this.checkIfBucketHasStorageCapacity(
+                file.size
+            );
+            if (!haveEnoughStorage) {
+                this._toastr.error(
+                    'You dont have enough storage to save this file!'
+                );
+                return;
+            }
             this.currentUpload = new Upload(file);
             this.pushUpload(this.currentUpload);
         } else {
@@ -138,5 +156,18 @@ export class StorageService implements OnInit {
                 await this.loadStorageFiles();
             }
         );
+    }
+
+    async deleteFile(path: string) {
+        const storageRef = ref(this.storage, path);
+        try {
+            await deleteObject(storageRef);
+            this._toastr.success(`Deleted Successfully!`);
+        } catch (error) {
+            console.error(error);
+            this._toastr.error(`Failed to delete ${storageRef.name}`);
+        } finally {
+            await this.loadStorageFiles();
+        }
     }
 }

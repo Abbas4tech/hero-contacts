@@ -15,6 +15,7 @@ import { AuthService } from './modules/auth/services/auth.service';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { getStorage, provideStorage } from '@angular/fire/storage';
+import { providePerformance, getPerformance } from '@angular/fire/performance';
 
 @NgModule({
     declarations: [AppComponent],
@@ -28,6 +29,7 @@ import { getStorage, provideStorage } from '@angular/fire/storage';
         provideFirestore(() => getFirestore()),
         AngularFirestoreModule.enablePersistence(),
         provideStorage(() => getStorage()),
+        providePerformance(() => getPerformance()),
         ServiceWorkerModule.register('ngsw-worker.js', {
             enabled: true,
             // Register the ServiceWorker as soon as the application is stable

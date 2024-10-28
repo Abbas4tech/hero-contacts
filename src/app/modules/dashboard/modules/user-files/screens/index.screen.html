@@ -72,8 +72,11 @@
                         </td>
                         <td>{{metaData.updated}}</td>
                         <th>
-                            <button class="btn btn-ghost btn-xs">
-                                details
+                            <button
+                                (click)="deleteFile(metaData.fullPath)"
+                                class="btn btn-ghost btn-xs"
+                            >
+                                Delete
                             </button>
                         </th>
                     </tr>
