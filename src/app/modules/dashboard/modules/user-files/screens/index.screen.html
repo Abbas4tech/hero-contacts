@@ -3,86 +3,35 @@
         class="flex item h-12 md:h-16 gap-4 items-center justify-between md:pb-4 pb-2"
     >
         <div class="flex gap-4 items-center justify-center">
-            <p
-                class="text-3xl cursor-pointer tooltip tooltip-bottom"
-                data-tip="Back"
-            >
-                <
-            </p>
-            <h1 class="text-base md:text-xl font-bold">My Files</h1>
+            <breadcrumb></breadcrumb>
         </div>
 
-        <storage-meter></storage-meter>
+        <div class="flex gap-4 items-center">
+            <storage-meter></storage-meter>
+            <div>
+                <input
+                    type="file"
+                    name=""
+                    id=""
+                    hidden
+                    (change)="detectFiles($event)"
+                    #fileInput
+                />
+                <button
+                    (click)="fileElement.nativeElement.click()"
+                    class="btn btn-primary"
+                >
+                    Upload
+                </button>
+            </div>
+        </div>
     </section>
-    <hr />
-    <input
-        type="file"
-        (change)="detectFiles($event)"
-        class="file-input w-full max-w-xs"
-    />
-
-    <button class="btn btn-primary" (click)="uploadSingleFile()">Upload</button>
-    <div class="overflow-x-auto w-full">
-        <table class="table w-full">
-            <thead>
-                <tr>
-                    <th>
-                        <label>
-                            <input type="checkbox" class="checkbox" />
-                        </label>
-                    </th>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Updated At</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- row 1 -->
-                <ng-container *ngFor="let metaData of files">
-                    <tr>
-                        <th>
-                            <label>
-                                <input type="checkbox" class="checkbox" />
-                            </label>
-                        </th>
-                        <td>
-                            <div class="flex items-center gap-3">
-                                <div>
-                                    <div class="font-bold">
-                                        {{metaData.name}}
-                                    </div>
-                                    <div class="text-sm opacity-40">
-                                        {{metaData.timeCreated}}
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge badge-ghost badge-sm md:badge-md"
-                                >{{metaData.contentType.charAt(0).toUpperCase()
-                                + metaData.contentType.slice(1)}}</span
-                            >
-                        </td>
-                        <td>{{metaData.updated}}</td>
-                        <th>
-                            <button
-                                (click)="deleteFile(metaData.fullPath)"
-                                class="btn btn-ghost btn-xs"
-                            >
-                                Delete
-                            </button>
-                        </th>
-                    </tr>
-                </ng-container>
-            </tbody>
-        </table>
-    </div>
 </article>
+<router-outlet></router-outlet>
 <!-- Open the modal using ID.showModal() method -->
 <button class="btn" onclick="my_modal_5.showModal()">open modal</button>
 <dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
-    <div class="modal-box">
+    <div class="modal-box bg-transparent">
         <h3 class="text-lg font-bold">Hello!</h3>
         <p class="py-4">Press ESC key or click the button below to close</p>
         <div class="modal-action">

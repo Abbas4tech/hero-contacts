@@ -18,6 +18,7 @@ import { initializeApp } from '@firebase/app';
 import { environment } from 'src/environments/environment';
 import { StorageFile } from '../model/types';
 import { BehaviorSubject } from 'rxjs';
+import { timeSince } from '../utils/controllers';
 
 interface StorageState {
     files: StorageFile[];
@@ -77,7 +78,18 @@ export class StorageService implements OnInit {
         const url = await getDownloadURL(item);
         return {
             ...metadata,
-            updated: new Date(metadata.updated).toDateString(),
+            timeCreated: new Date(metadata.timeCreated).toLocaleString(
+                'en-US',
+                {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric',
+                    hour12: true,
+                }
+            ),
             url,
         };
     }

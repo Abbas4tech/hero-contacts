@@ -1,12 +1,27 @@
 import { NgModule } from '@angular/core';
-import { Router, RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { UserFilesScreen } from './screens/index.screen';
+import { FileDetailsScreen } from './screens/details/details.screen';
+import { FilesTable } from './components/table/table.component';
 
 const routes: Routes = [
     {
         path: '',
-        pathMatch: 'full',
         component: UserFilesScreen,
+        children: [
+            {
+                path: 'all',
+                component: FilesTable,
+            },
+            {
+                path: 'details',
+                component: FileDetailsScreen,
+            },
+            {
+                path: '**',
+                redirectTo: 'all',
+            },
+        ],
     },
 ];
 
