@@ -1,11 +1,12 @@
 import { LayoutService } from 'src/app/modules/dashboard/services/layout.service';
 import { CommonService } from 'src/app/services/common.service';
-import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
-    fadeInOut,
-    fade,
-    staggedIn,
-} from 'src/app/modules/shared/animations/shared.animations';
+    Component,
+    OnDestroy,
+    OnInit,
+    TemplateRef,
+    ViewChild,
+} from '@angular/core';
 
 import { CardStatus, Contact } from '../../model/contacts.model';
 import { ContactService } from '../../services/contacts.service';
@@ -14,7 +15,6 @@ import { Subscription } from 'rxjs';
 @Component({
     selector: 'contacts-screen',
     templateUrl: './index.screen.html',
-    animations: [fadeInOut, fade, staggedIn],
 })
 export class ContactsIndexScreen implements OnInit, OnDestroy {
     list: Contact[];
@@ -22,6 +22,8 @@ export class ContactsIndexScreen implements OnInit, OnDestroy {
     isMultiSelected!: boolean;
     subscriptions: Subscription[] = [];
     cards: CardStatus[];
+    @ViewChild('addContactTemplate')
+    addContactTemplate: TemplateRef<HTMLElement[]>;
     constructor(
         private _common: CommonService,
         private _layout: LayoutService,
@@ -33,6 +35,9 @@ export class ContactsIndexScreen implements OnInit, OnDestroy {
         if (this.subs) {
             this.subs.unsubscribe();
         }
+        setTimeout(() => {
+            this._common.updateTemplate(this.addContactTemplate);
+        });
         this.subs = this._contactService
             .getContacts()
             .subscribe((data) => (this.list = data));
@@ -78,5 +83,6 @@ export class ContactsIndexScreen implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.subscriptions.forEach((e) => e.unsubscribe());
+        this._common.updateTemplate(null);
     }
 }

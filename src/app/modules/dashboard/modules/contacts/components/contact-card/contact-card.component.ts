@@ -11,14 +11,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { LayoutService } from 'src/app/modules/dashboard/services/layout.service';
-import { fadeInOut } from 'src/app/modules/shared/animations/shared.animations';
 import { Contact } from '../../model/contacts.model';
 import { ContactService } from '../../services/contacts.service';
 
 @Component({
     selector: 'contact-card',
     templateUrl: './contact-card.component.html',
-    animations: [fadeInOut],
     styleUrls: ['./contact-card.component.scss'],
 })
 export class ContactCardComponent implements OnDestroy {

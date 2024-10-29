@@ -1,75 +1,64 @@
-<article class="p-2">
-    <section
-        class="flex item gap-4 items-center h-12 md:h-16 md:px-2 md:pb-4 px-1 pb-2"
-    >
-        <breadcrumb></breadcrumb>
-    </section>
-    <hr />
-    <section class="w-[90%] max-w-4xl mx-auto flex flex-col items-center mt-4">
-        <div
-            class="tooltip m-2 tooltip-bottom"
-            data-tip="Choose Profile Photo!"
-        >
-            <div class="avatar">
-                <div
-                    class="w-36 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2"
-                >
-                    <img
-                        [src]="user.photoURL"
-                        class=""
-                        alt="user-img"
-                        loading="lazy"
-                        (click)="selectFile()"
-                    />
-                    <input
-                        type="file"
-                        id="avatar"
-                        networkDisabled
-                        (change)="uploadprofile($event)"
-                        accept="image/jpg"
-                        class="hidden"
-                    />
-                </div>
+<section class="w-full flex flex-col items-center">
+    <div class="tooltip m-2 tooltip-bottom" data-tip="Choose Profile Photo!">
+        <div class="avatar">
+            <div
+                class="w-36 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2"
+            >
+                <img
+                    [src]="user.photoURL"
+                    class=""
+                    alt="user-img"
+                    loading="lazy"
+                    (click)="selectFile()"
+                />
+                <input
+                    type="file"
+                    id="avatar"
+                    networkDisabled
+                    (change)="uploadprofile($event)"
+                    accept="image/jpg"
+                    class="hidden"
+                />
             </div>
         </div>
-        <section class="mb-4 mt-8 p-0 bg-base-300"></section>
-        <form
-            action="user-update"
-            [formGroup]="updateForm"
-            (ngSubmit)="submitForm()"
-        >
-            <section class="form-control">
-                <label
-                    for="name"
-                    [ngClass]="{'text-error':username.errors && username.touched}"
-                    class="label font-semibold text-sm md:text-lg"
-                    >User Name :</label
+    </div>
+    <section class="mb-4 mt-8 p-0 bg-base-300"></section>
+    <form
+        action="user-update"
+        [formGroup]="updateForm"
+        (ngSubmit)="submitForm()"
+    >
+        <section class="form-control">
+            <label
+                for="name"
+                [ngClass]="{'text-error':username.errors && username.touched}"
+                class="label font-semibold text-sm md:text-lg"
+                >User Name :</label
+            >
+            <input
+                type="text"
+                [ngClass]="{'input-error':username.errors && username.touched}"
+                formControlName="username"
+                class="input input-bordered input-sm md:input-md"
+            />
+        </section>
+        <section @fade *ngIf="username.errors && username.touched" @fade>
+            <p class="text-xs md:text-sm mt-2 text-error font-semibold">
+                <ng-container *ngIf="username.errors['whitespace']"
+                    >User name is invalid</ng-container
                 >
-                <input
-                    type="text"
-                    [ngClass]="{'input-error':username.errors && username.touched}"
-                    formControlName="username"
-                    class="input input-bordered input-sm md:input-md"
-                />
-            </section>
-            <section @fade *ngIf="username.errors && username.touched" @fade>
-                <p class="text-xs md:text-sm mt-2 text-error font-semibold">
-                    <ng-container *ngIf="username.errors['whitespace']"
-                        >User name is invalid</ng-container
-                    >
-                </p>
-            </section>
-            <section class="flex mt-4 justify-end">
-                <button
-                    networkDisabled
-                    [ngClass]="{'loading': isLoading}"
-                    [disabled]="!updateForm.valid"
-                    type="submit"
-                    class="btn-sm btn md:btn-md"
-                >
-                    Submit
-                </button>
-            </section>
-        </form>
-    </section>
-</article>
+            </p>
+        </section>
+        <section class="flex mt-4 justify-end">
+            <button
+                networkDisabled
+                [ngClass]="{'loading': isLoading}"
+                [disabled]="!updateForm.valid"
+                type="submit"
+                class="btn-sm btn md:btn-md"
+            >
+                Submit
+            </button>
+        </section>
+    </form>
+</section>

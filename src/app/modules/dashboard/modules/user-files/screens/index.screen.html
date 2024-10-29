@@ -1,44 +1,20 @@
-<article @fade class="">
-    <section
-        class="flex item h-12 md:h-16 gap-4 items-center justify-between md:pb-4 pb-2"
-    >
-        <div class="flex gap-4 items-center justify-center">
-            <breadcrumb></breadcrumb>
-        </div>
-
-        <div class="flex gap-4 items-center">
-            <storage-meter></storage-meter>
-            <div>
-                <input
-                    type="file"
-                    name=""
-                    id=""
-                    hidden
-                    (change)="detectFiles($event)"
-                    #fileInput
-                />
-                <button
-                    (click)="fileElement.nativeElement.click()"
-                    class="btn btn-primary"
-                >
-                    Upload
-                </button>
-            </div>
-        </div>
-    </section>
-</article>
-<router-outlet></router-outlet>
-<!-- Open the modal using ID.showModal() method -->
-<button class="btn" onclick="my_modal_5.showModal()">open modal</button>
-<dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
-    <div class="modal-box bg-transparent">
-        <h3 class="text-lg font-bold">Hello!</h3>
-        <p class="py-4">Press ESC key or click the button below to close</p>
-        <div class="modal-action">
-            <form method="dialog">
-                <!-- if there is a button in form, it will close the modal -->
-                <button class="btn">Close</button>
-            </form>
-        </div>
+<ng-template #uploadTemplate>
+    <storage-meter></storage-meter>
+    <div>
+        <input
+            type="file"
+            name=""
+            id=""
+            hidden
+            (change)="detectFiles($event)"
+            #fileInput
+        />
+        <button
+            (click)="fileElement.nativeElement.click()"
+            class="btn btn-primary"
+        >
+            Upload
+        </button>
     </div>
-</dialog>
+</ng-template>
+<files-table></files-table>

@@ -77,7 +77,11 @@
         <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
         <div class="drawer-content scrollbar-hide overflow-y-auto p-2 md:p-4">
             <ng-container *ngIf="contentLoaded; else loader">
-                <router-outlet></router-outlet>
+                <page-wrapper>
+                    <div class="router">
+                        <router-outlet></router-outlet>
+                    </div>
+                </page-wrapper>
             </ng-container>
         </div>
         <div class="drawer-side top-16">
@@ -87,7 +91,7 @@
                 class="drawer-overlay"
             ></label>
             <ul
-                class="menu bg-base-200 text-base-content min-h-full p-0 pt-4 w-[80%] md:w-80"
+                class="menu bg-base-200 lg:w-40 text-base-content min-h-full p-0 pt-4 w-[80%] xl:w-80"
             >
                 <li
                     class="py-1 md:py-2 pr-2 cursor-pointer aos-init aos-animate"

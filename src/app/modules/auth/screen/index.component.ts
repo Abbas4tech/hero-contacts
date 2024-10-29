@@ -10,7 +10,6 @@ import { Subscription } from 'rxjs';
 import { CommonService } from 'src/app/services/common.service';
 import { ToastService } from 'src/app/services/toaster.service';
 import { COMMONENUM, Theme } from 'src/app/types/common-types';
-import { fadeInOut } from '../../shared/animations/shared.animations';
 import { AuthService } from '../services/auth.service';
 import { SeoService } from 'src/app/services/seo.service';
 import { errorGenerator } from '../utils/auth.util';
@@ -19,7 +18,6 @@ import { errorGenerator } from '../utils/auth.util';
     selector: 'index',
     templateUrl: './index.component.html',
     styleUrls: ['./index.component.scss'],
-    animations: [fadeInOut],
     providers: [AuthService],
 })
 export class IndexComponent implements OnInit, OnDestroy {

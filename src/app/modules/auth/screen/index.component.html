@@ -26,7 +26,7 @@
                         class=""
                         (ngSubmit)="submitForm()"
                     >
-                        <section class="" @fade *ngIf="isSignUp">
+                        <section class="" *ngIf="isSignUp">
                             <label
                                 for="name"
                                 class="block mb-2 w-full font-bold"
@@ -42,7 +42,6 @@
                                 class="input input-bordered input-sm md:input-md w-full"
                             />
                             <label
-                                @fade
                                 for="error"
                                 *ngIf="name.errors && name.touched"
                                 class="label"
@@ -77,7 +76,6 @@
                                 class="input input-bordered input-sm md:input-md w-full"
                             />
                             <label
-                                @fade
                                 for="error"
                                 *ngIf="email.errors && email.touched"
                                 class="label"
@@ -111,7 +109,6 @@
                                 class="input input-bordered input-sm md:input-md input-error w-full"
                             />
                             <label
-                                @fade
                                 for="error"
                                 *ngIf="password.errors && password.touched"
                                 class="label"

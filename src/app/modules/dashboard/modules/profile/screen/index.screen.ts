@@ -1,4 +1,3 @@
-import { fadeInOut } from './../../../../shared/animations/shared.animations';
 import { Component, Inject, OnDestroy } from '@angular/core';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { updateProfile, User } from '@angular/fire/auth';
@@ -21,7 +20,6 @@ import { CommonService } from 'src/app/services/common.service';
 @Component({
     selector: 'profile',
     templateUrl: './index.screen.html',
-    animations: [fadeInOut],
 })
 export class IndexProfileScreen implements OnDestroy {
     task: AngularFireUploadTask;

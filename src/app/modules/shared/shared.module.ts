@@ -5,6 +5,7 @@ import { ThemeToggler } from './components/theme-toggler/theme-toggler.component
 import { NewtworkManagerDirective } from './directives/network-manager.directive';
 import { CapitalizePipe } from './pipes/capitalize.pipe';
 import { Breadcrumb } from './components/breadcrumb/breadcrumb.component';
+import { PageWrapper } from './components/page-wrapper/page-wrapper.component';
 
 @NgModule({
     declarations: [
@@ -13,6 +14,7 @@ import { Breadcrumb } from './components/breadcrumb/breadcrumb.component';
         MessageComponent,
         CapitalizePipe,
         Breadcrumb,
+        PageWrapper,
     ],
     imports: [CommonModule],
     exports: [
@@ -21,6 +23,7 @@ import { Breadcrumb } from './components/breadcrumb/breadcrumb.component';
         Breadcrumb,
         MessageComponent,
         CapitalizePipe,
+        PageWrapper,
     ],
     providers: [],
 })

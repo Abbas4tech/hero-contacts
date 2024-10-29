@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { StorageService } from '../../services/storage.service';
 import { Subject, takeUntil } from 'rxjs';
 import { StorageFile } from '../../model/types';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'files-table',
@@ -13,8 +13,7 @@ export class FilesTable implements OnInit {
     private destroy$ = new Subject<void>();
     constructor(
         private _uploadService: StorageService,
-        private _router: Router,
-        private _activeRoute: ActivatedRoute
+        private _router: Router
     ) {}
 
     showDetails(name: string) {

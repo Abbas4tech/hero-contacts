@@ -14,7 +14,6 @@ import {
     Validators,
     AbstractControl,
 } from '@angular/forms';
-import { fadeInOut } from 'src/app/modules/shared/animations/shared.animations';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToastService } from 'src/app/services/toaster.service';
 import { randomAvatarUrlGenerator } from 'src/app/modules/auth/utils/auth.util';
@@ -24,7 +23,6 @@ import { descriptionValidator } from '../../validators/validators';
     selector: 'add-contact',
     templateUrl: './form.component.html',
     styleUrls: ['./form.component.scss'],
-    animations: [fadeInOut],
 })
 export class ContactFormPage implements OnInit {
     addContactForm: FormGroup;
