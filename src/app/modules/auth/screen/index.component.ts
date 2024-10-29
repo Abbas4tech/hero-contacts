@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
     AbstractControl,
     FormBuilder,
-    FormControl,
+    FormGroup,
     Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -21,43 +21,38 @@ import { errorGenerator } from '../utils/auth.util';
 })
 export class IndexComponent implements OnInit, OnDestroy {
     isSignUp = true;
-    subscriptons: Subscription[] = [];
-
-    isShown = false;
-    authForm = this._fb.group({
-        name: new FormControl('', [
-            Validators.required,
-            Validators.maxLength(15),
-        ]),
-        email: new FormControl('', [Validators.required, Validators.email]),
-        password: new FormControl('', [
-            Validators.required,
-            Validators.minLength(6),
-        ]),
-    });
-
+    subscriptions: Subscription[] = [];
     isLoading = false;
+
+    authForm: FormGroup;
+
     constructor(
-        private _router: Router,
-        private _common: CommonService,
-        private _fb: FormBuilder,
-        private _auth: AuthService,
-        private _toastr: ToastService,
-        private _seoService: SeoService
+        private router: Router,
+        private commonService: CommonService,
+        private fb: FormBuilder,
+        private authService: AuthService,
+        private toastr: ToastService,
+        private seoService: SeoService
     ) {
-        this._common.setTitle('Auth');
-        const theme = localStorage.getItem(COMMONENUM.THEME) as Theme;
-        if (theme) {
-            this._common.setTheme(theme);
-        }
-        this._seoService.setSeoData();
-        setTimeout(() => {
-            this.isShown = true;
-        }, 2000);
+        this.authForm = this.createAuthForm();
+        this.initialize();
     }
 
-    closeBanner(b: boolean) {
-        this.isShown = false;
+    private createAuthForm(): FormGroup {
+        return this.fb.group({
+            name: [''],
+            email: ['', [Validators.required, Validators.email]],
+            password: ['', [Validators.required, Validators.minLength(6)]],
+        });
+    }
+
+    private initialize(): void {
+        this.commonService.setTitle('Auth');
+        const theme = localStorage.getItem(COMMONENUM.THEME) as Theme;
+        if (theme) {
+            this.commonService.setTheme(theme);
+        }
+        this.seoService.setSeoData();
     }
 
     get email(): AbstractControl {
@@ -71,88 +66,95 @@ export class IndexComponent implements OnInit, OnDestroy {
     get name(): AbstractControl {
         return this.authForm.get('name');
     }
+
     signInWithGoogle(): void {
-        this.isLoading = true;
-        this.subscriptons.push(
-            this._auth.signInWithGoogle().subscribe({
+        this.setLoading(true);
+        this.subscriptions.push(
+            this.authService.signInWithGoogle().subscribe({
                 next: (value) => {
-                    this._router.navigate(['dashboard/contacts']);
-                    this._toastr.success(`Signed in as ${value.displayName}`);
-                    this.isLoading = false;
+                    this.router.navigate(['dashboard/contacts']);
+                    this.toastr.success(`Signed in as ${value.displayName}`);
+                    this.setLoading(false);
                 },
                 error: (err) => {
-                    this.isLoading = false;
-                    this._toastr.error(errorGenerator(err.message));
+                    this.handleError(err);
                 },
-                complete: () => {},
             })
         );
     }
 
     async submitForm(): Promise<void> {
-        const { email, password, name } = this.authForm.value;
-        if (this.isSignUp) {
-            this.signUp(name, email, password);
-        } else {
-            this.signIn(email, password);
-        }
+        const { email, password, name } = this.authForm.value as Record<
+            string,
+            string
+        >;
+        this.isSignUp
+            ? await this.signUp(name, email, password)
+            : await this.signIn(email, password);
     }
 
-    async signIn(email: string, password: string): Promise<void> {
-        this.isLoading = true;
-        this.subscriptons.push(
-            this._auth.signIn(email, password).subscribe({
-                next: (value) => {
-                    this._router.navigate(['dashboard/contacts']);
-                    this._toastr.success(`Loggedin Successfully!`);
+    private async signIn(email: string, password: string): Promise<void> {
+        this.setLoading(true);
+        this.subscriptions.push(
+            this.authService.signIn(email, password).subscribe({
+                next: () => {
+                    this.router.navigate(['dashboard/contacts']);
                     this.authForm.reset();
-                    this.isLoading = false;
+                    this.setLoading(false);
                 },
                 error: (err) => {
-                    this.isLoading = false;
-                    this._toastr.error(errorGenerator(err.message));
-                    this.authForm.reset();
+                    this.handleError(err);
                 },
             })
         );
     }
 
-    async signUp(name: string, email: string, password: string): Promise<void> {
+    private async signUp(
+        name: string,
+        email: string,
+        password: string
+    ): Promise<void> {
+        this.setLoading(true);
         try {
-            this.isLoading = true;
-            await this._auth.signUp(name, email, password);
+            await this.authService.signUp(name, email, password);
             this.authForm.reset();
-            this.isLoading = false;
         } catch (err) {
-            console.error(err);
-            this._toastr.error(errorGenerator(err.message));
-            this.isLoading = false;
+            this.handleError(err);
         }
     }
 
     toggleMode(): void {
         this.isSignUp = !this.isSignUp;
-        if (!this.isSignUp) {
-            this.authForm.removeControl('name', { emitEvent: true });
-        } else {
+        if (this.isSignUp) {
             this.authForm.addControl(
                 'name',
-                new FormControl('', [
+                this.fb.control('', [
                     Validators.required,
                     Validators.maxLength(15),
-                ]),
-                {
-                    emitEvent: true,
-                }
+                ])
             );
+        } else {
+            this.authForm.removeControl('name');
         }
     }
+
     ngOnDestroy(): void {
-        this.subscriptons.forEach((subs) => subs.unsubscribe());
+        this.subscriptions.forEach((subs) => subs.unsubscribe());
     }
 
     ngOnInit(): void {}
+
+    private handleError(err: any): void {
+        this.setLoading(false);
+        this.toastr.error(errorGenerator(err.message));
+        this.authForm.reset();
+    }
+
+    private setLoading(loading: boolean): void {
+        this.isLoading = loading;
+    }
+
     goToDashboard(): void {
-        this._router.navigate(['dashboard']);
+        this.router.navigate(['dashboard']);
     }
 }

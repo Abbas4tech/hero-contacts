@@ -1,4 +1,3 @@
-import { MessageComponent } from './components/message/message.component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ThemeToggler } from './components/theme-toggler/theme-toggler.component';
@@ -11,7 +10,6 @@ import { PageWrapper } from './components/page-wrapper/page-wrapper.component';
     declarations: [
         ThemeToggler,
         NewtworkManagerDirective,
-        MessageComponent,
         CapitalizePipe,
         Breadcrumb,
         PageWrapper,
@@ -21,7 +19,6 @@ import { PageWrapper } from './components/page-wrapper/page-wrapper.component';
         ThemeToggler,
         NewtworkManagerDirective,
         Breadcrumb,
-        MessageComponent,
         CapitalizePipe,
         PageWrapper,
     ],

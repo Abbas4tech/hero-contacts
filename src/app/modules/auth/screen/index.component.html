@@ -4,22 +4,17 @@
     >
         <theme-toggler panelClass="text-base-content"></theme-toggler>
     </div>
-    <div class="hero-content gap-8 flex-col lg:flex-row-reverse">
+    <div class="hero-content gap-4 lg:gap-8 flex-col lg:flex-row-reverse">
         <div class="text-center lg:text-left">
-            <h1 class="text-5xl font-bold">My Contacts</h1>
-            <p class="py-6">
+            <h1 class="text-3xl lg:text-5xl font-bold">My Contacts</h1>
+            <p class="pt-3 lg:pt-6">
                 <strong>My Contacts</strong> is a fast and efficient web app for
                 storing your personal contacts
             </p>
         </div>
         <div class="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-            <div class="card-body">
+            <div class="card-body p-4 lg:p-8">
                 <article class="w-full max-w-md">
-                    <message
-                        *ngIf="isShown"
-                        (onClick)="closeBanner($event)"
-                        message="We don't store any personal information of user i.e password etc."
-                    ></message>
                     <form
                         [formGroup]="authForm"
                         action="authentication"

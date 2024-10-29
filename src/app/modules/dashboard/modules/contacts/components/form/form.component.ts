@@ -26,7 +26,6 @@ import { descriptionValidator } from '../../validators/validators';
 export class ContactFormPage implements OnInit {
     addContactForm: FormGroup;
     statuses: Contactstatus[] = ['active', 'inactive'];
-    mode: string;
 
     constructor(
         private commonService: CommonService,
@@ -37,17 +36,12 @@ export class ContactFormPage implements OnInit {
         private route: ActivatedRoute,
         private contactService: ContactService
     ) {
-        this.mode = this.route.snapshot.queryParams[ContactsQueryParams.MODE];
-        this.commonService.setTitle(
-            this.mode === ContactsQueryParams.ADD ? 'Add' : 'Edit'
-        );
+        this.commonService.setTitle(this.isEditMode ? 'Edit' : 'Add');
     }
 
     ngOnInit(): void {
         this.initForm();
-        if (this.isEditMode()) {
-            this.loadContactData();
-        }
+        if (this.isEditMode) this.loadContactData();
     }
 
     private initForm(): void {
@@ -67,18 +61,14 @@ export class ContactFormPage implements OnInit {
         data.contacts.forEach((contact) =>
             this.contacts.push(this.createContactGroup(contact))
         );
-
-        this.addContactForm.patchValue({
-            id: data.id,
-            photoUrl: data.photoUrl,
-            name: data.name,
-            status: data.status,
-            description: data.description,
-        });
+        this.addContactForm.patchValue(data);
     }
 
-    private isEditMode(): boolean {
-        return this.mode === ContactsQueryParams.EDIT;
+    get isEditMode(): boolean {
+        return (
+            this.route.snapshot.queryParams[ContactsQueryParams.MODE] ===
+            ContactsQueryParams.EDIT
+        );
     }
 
     private createContactGroup(contact?: {
@@ -88,10 +78,7 @@ export class ContactFormPage implements OnInit {
         return this.fb.group({
             email: [
                 contact?.email || '',
-                [
-                    Validators.required,
-                    Validators.pattern('^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$'),
-                ],
+                [Validators.required, Validators.email],
             ],
             phone: [
                 contact?.phone || '',
@@ -113,9 +100,9 @@ export class ContactFormPage implements OnInit {
     }
 
     async submit(): Promise<void> {
+        const contactData = this.addContactForm.value as Contact;
         try {
-            const contactData = { ...this.addContactForm.value } as Contact;
-            this.isEditMode()
+            this.isEditMode
                 ? await this.contactService.updateContact(
                       contactData.id,
                       contactData
@@ -125,8 +112,8 @@ export class ContactFormPage implements OnInit {
             this.router.navigate(['dashboard/contacts']);
             this.addContactForm.reset();
         } catch (err) {
-            console.error(err);
-            this.toastr.error(err.message);
+            console.error('Error submitting form:', err);
+            this.toastr.error('An error occurred while saving the contact.');
         }
     }
 
