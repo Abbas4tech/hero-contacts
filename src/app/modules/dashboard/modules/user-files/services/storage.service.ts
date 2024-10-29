@@ -35,7 +35,7 @@ export class StorageService implements OnInit {
     });
 
     private selectedFiles: FileList;
-    private currentUpload: Upload;
+    currentUpload: Upload;
 
     readonly basePath: string = this._auth.user.value?.email || '';
     readonly maxBucketSizeInBytes = 104857600; // 100MB
@@ -122,7 +122,7 @@ export class StorageService implements OnInit {
             this.currentUpload = new Upload(file);
             this.pushUpload(this.currentUpload);
         } else {
-            this._toastr.error('No file selected for upload.');
+            this._toastr.warning('No file selected for upload.');
         }
     }
 

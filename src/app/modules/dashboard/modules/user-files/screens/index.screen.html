@@ -1,19 +1,20 @@
 <article @fade class="">
     <section
-        class="flex item h-12 md:h-16 gap-4 items-center md:px-2 md:pb-4 px-1 pb-2"
+        class="flex item h-12 md:h-16 gap-4 items-center justify-between md:pb-4 pb-2"
     >
-        <p
-            class="text-3xl cursor-pointer tooltip tooltip-bottom"
-            data-tip="Back"
-        >
-            <
-        </p>
-        <h1 class="text-base md:text-xl font-bold">My Files</h1>
+        <div class="flex gap-4 items-center justify-center">
+            <p
+                class="text-3xl cursor-pointer tooltip tooltip-bottom"
+                data-tip="Back"
+            >
+                <
+            </p>
+            <h1 class="text-base md:text-xl font-bold">My Files</h1>
+        </div>
+
+        <storage-meter></storage-meter>
     </section>
     <hr />
-
-    <storage-meter></storage-meter>
-
     <input
         type="file"
         (change)="detectFiles($event)"

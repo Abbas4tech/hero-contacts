@@ -7,16 +7,27 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
     selector: 'storage-meter',
     template: `
-        <div class="flex py-2 flex-col gap-3">
+        <div
+            [data-tip]="
+                currentConsumptionInFormat +
+                ' of ' +
+                maxBucketConsumptionInFormat
+            "
+            class="flex relative gap-3 items-center text-sm tooltip-primary tooltip tooltip-bottom cursor-pointer"
+        >
+            <span class="font-bold">Storage Used:</span>
             <progress
-                class="progress progress-success w-56"
+                class="progress w-56"
                 [value]="percentageConsumption"
+                [ngClass]="{
+                    'progress-success': percentageConsumption <= 50,
+                    'progress-warning':
+                        percentageConsumption > 50 &&
+                        percentageConsumption < 90,
+                    'progress-error': percentageConsumption >= 90
+                }"
                 max="100"
             ></progress>
-            <p>
-                {{ currentConsumptionInFormat }} of
-                {{ maxBucketConsumptionInFormat }}
-            </p>
         </div>
     `,
 })
