@@ -83,7 +83,6 @@ export class IndexComponent implements OnInit, OnDestroy {
                 },
                 error: (err) => {
                     this.isLoading = false;
-                    console.log(err.message);
                     this._toastr.error(errorGenerator(err.message));
                 },
                 complete: () => {},

@@ -18,8 +18,6 @@ export class Breadcrumb implements OnInit, OnDestroy {
     constructor(private _router: Router, private _route: ActivatedRoute) {}
 
     ngOnInit(): void {
-        console.log('In Init');
-
         this.updateRouteState();
 
         this.routeSubscription = this._router.events
@@ -33,7 +31,6 @@ export class Breadcrumb implements OnInit, OnDestroy {
                 }))
             )
             .subscribe((routeState) => {
-                console.log('Route State:', routeState);
                 this.pages = routeState.path;
             });
     }
@@ -42,7 +39,6 @@ export class Breadcrumb implements OnInit, OnDestroy {
         this.pages = this._router.parseUrl(this._router.url).root.children[
             'primary'
         ].segments;
-        console.log('Initial Route State:', this.pages);
     }
 
     redirect(path: string) {

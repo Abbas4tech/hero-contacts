@@ -17,7 +17,6 @@ export class FilesTable implements OnInit {
     ) {}
 
     showDetails(name: string) {
-        console.log('Details Ran');
         this._router.navigate(['dashboard/files/details'], {
             queryParams: {
                 name,

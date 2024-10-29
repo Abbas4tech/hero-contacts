@@ -115,7 +115,6 @@ export class StorageService implements OnInit {
         const currentConsumption =
             this.storageState.getValue().totalConsumption;
         const availableSize = this.maxBucketSizeInBytes - currentConsumption;
-        console.log(availableSize);
         return availableSize >= sizeToUplaod;
     }
 

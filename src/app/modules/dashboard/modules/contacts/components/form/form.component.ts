@@ -114,7 +114,6 @@ export class ContactFormPage implements OnInit {
     }
 
     async submit(): Promise<void> {
-        console.log('Submit Ran');
         try {
             const contactData = { ...this.addContactForm.value } as Contact;
             this.isEditMode()
@@ -127,7 +126,6 @@ export class ContactFormPage implements OnInit {
             this.router.navigate(['dashboard/contacts']);
             this.addContactForm.reset();
         } catch (err) {
-            console.log(this.addContactForm);
             console.error(err);
             this.toastr.error(err.message);
         }

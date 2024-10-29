@@ -65,7 +65,6 @@ export class AuthService {
             this._toastr.success(`Logged In as ${this.user.value.displayName}`);
         } catch (err) {
             if (err instanceof FirebaseError) {
-                console.error('Firebase Error', err);
                 const errorMessage = errorGenerator(err.message);
                 this._toastr.error(errorMessage);
             }

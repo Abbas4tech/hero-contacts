@@ -9,7 +9,6 @@ export class TooltipDirective {
     constructor(private el: ElementRef, private renderer: Renderer2) {}
 
     ngOnInit() {
-        console.log(this.el.nativeElement);
         if (this.tooltipText) {
             this.renderer.setAttribute(
                 this.el.nativeElement,
