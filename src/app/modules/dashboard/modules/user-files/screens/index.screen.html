@@ -1,4 +1,4 @@
-<article @fade class="p-2">
+<article @fade class="">
     <section
         class="flex item h-12 md:h-16 gap-4 items-center md:px-2 md:pb-4 px-1 pb-2"
     >
@@ -51,7 +51,7 @@
                                     <div class="font-bold">
                                         {{metaData.name}}
                                     </div>
-                                    <div class="text-sm opacity-50">
+                                    <div class="text-sm opacity-40">
                                         {{metaData.timeCreated}}
                                     </div>
                                 </div>
@@ -59,7 +59,8 @@
                         </td>
                         <td>
                             <span class="badge badge-ghost badge-sm md:badge-md"
-                                >{{metaData.contentType}}</span
+                                >{{metaData.contentType.charAt(0).toUpperCase()
+                                + metaData.contentType.slice(1)}}</span
                             >
                         </td>
                         <td>{{metaData.updated}}</td>
@@ -77,3 +78,17 @@
         </table>
     </div>
 </article>
+<!-- Open the modal using ID.showModal() method -->
+<button class="btn" onclick="my_modal_5.showModal()">open modal</button>
+<dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box">
+        <h3 class="text-lg font-bold">Hello!</h3>
+        <p class="py-4">Press ESC key or click the button below to close</p>
+        <div class="modal-action">
+            <form method="dialog">
+                <!-- if there is a button in form, it will close the modal -->
+                <button class="btn">Close</button>
+            </form>
+        </div>
+    </div>
+</dialog>

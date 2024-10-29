@@ -131,11 +131,14 @@
                         </section>
                         <button
                             [disabled]="!authForm.valid"
-                            [ngClass]="{ loading: isLoading }"
                             type="submit"
                             networkDisabled
                             class="btn btn-sm md:btn-md btn-block mt-2"
                         >
+                            <span
+                                *ngIf="isLoading"
+                                class="loading loading-spinner"
+                            ></span>
                             {{ isSignUp ? 'Signup' : 'Login' }}
                         </button>
                         <section
