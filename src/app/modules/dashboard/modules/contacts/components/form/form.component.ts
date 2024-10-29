@@ -14,7 +14,6 @@ import {
     Validators,
     AbstractControl,
 } from '@angular/forms';
-import { fadeInOut } from 'src/app/modules/shared/animations/shared.animations';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToastService } from 'src/app/services/toaster.service';
 import { randomAvatarUrlGenerator } from 'src/app/modules/auth/utils/auth.util';
@@ -24,133 +23,125 @@ import { descriptionValidator } from '../../validators/validators';
     selector: 'add-contact',
     templateUrl: './form.component.html',
     styleUrls: ['./form.component.scss'],
-    animations: [fadeInOut],
 })
 export class ContactFormPage implements OnInit {
     addContactForm: FormGroup;
     statuses: Contactstatus[] = ['active', 'inactive'];
     mode: string;
+
     constructor(
-        private _common: CommonService,
-        private _location: Location,
-        private _fb: FormBuilder,
-        private _toastr: ToastService,
-        private _router: Router,
-        private _route: ActivatedRoute,
-        private _conatctSer: ContactService
+        private commonService: CommonService,
+        private location: Location,
+        private fb: FormBuilder,
+        private toastr: ToastService,
+        private router: Router,
+        private route: ActivatedRoute,
+        private contactService: ContactService
     ) {
-        this.mode = this._route.snapshot.queryParams[ContactsQueryParams.MODE];
-        if (this.mode === ContactsQueryParams.ADD) {
-            this._common.setTitle('Add');
-        } else {
-            this._common.setTitle('Edit');
+        this.mode = this.route.snapshot.queryParams[ContactsQueryParams.MODE];
+        this.commonService.setTitle(
+            this.mode === ContactsQueryParams.ADD ? 'Add' : 'Edit'
+        );
+    }
+
+    ngOnInit(): void {
+        this.initForm();
+        if (this.isEditMode()) {
+            this.loadContactData();
         }
-        this.addContactForm = this._fb.group({
-            name: this._fb.control('', [Validators.required]),
-            contacts: this._fb.array([
-                this._fb.group({
-                    email: [
-                        '',
-                        [
-                            Validators.required,
-                            Validators.pattern(
-                                '^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$'
-                            ),
-                        ],
-                    ],
-                    phone: [
-                        '',
-                        [Validators.required, Validators.pattern('[0-9]{10}')],
-                    ],
-                }),
-            ]),
-            status: this._fb.control('active'),
-            description: this._fb.control('', [
-                Validators.required,
-                descriptionValidator,
-            ]),
+    }
+
+    private initForm(): void {
+        this.addContactForm = this.fb.group({
+            name: ['', Validators.required],
+            contacts: this.fb.array([this.createContactGroup()]),
+            status: ['active'],
+            description: ['', [Validators.required, descriptionValidator]],
             id: Math.random(),
             photoUrl: randomAvatarUrlGenerator(),
         });
     }
-    ngOnInit(): void {
-        if (
-            this._route.snapshot.queryParams[ContactsQueryParams.MODE] ===
-            ContactsQueryParams.EDIT
-        ) {
-            const data = this._route.snapshot.data['formData'] as Contact;
-            this.addContactForm.setValue({
-                id: data.id,
-                photoUrl: data.photoUrl,
-                name: data.name,
-                contacts: data.contacts.map((e) => ({
-                    email: e.email,
-                    phone: e.phone,
-                })),
-                status: data.status,
-                description: data.description,
-            });
-        }
+
+    private loadContactData(): void {
+        const data = this.route.snapshot.data['formData'] as Contact;
+        this.contacts.clear();
+        data.contacts.forEach((contact) =>
+            this.contacts.push(this.createContactGroup(contact))
+        );
+
+        this.addContactForm.patchValue({
+            id: data.id,
+            photoUrl: data.photoUrl,
+            name: data.name,
+            status: data.status,
+            description: data.description,
+        });
+    }
+
+    private isEditMode(): boolean {
+        return this.mode === ContactsQueryParams.EDIT;
+    }
+
+    private createContactGroup(contact?: {
+        email: string;
+        phone: number;
+    }): FormGroup {
+        return this.fb.group({
+            email: [
+                contact?.email || '',
+                [
+                    Validators.required,
+                    Validators.pattern('^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$'),
+                ],
+            ],
+            phone: [
+                contact?.phone || '',
+                [Validators.required, Validators.pattern('[0-9]{10}')],
+            ],
+        });
     }
 
     get contacts(): FormArray {
         return this.addContactForm.get('contacts') as FormArray;
     }
 
-    async submit(): Promise<void> {
-        try {
-            if (
-                this._route.snapshot.queryParams[ContactsQueryParams.MODE] ===
-                ContactsQueryParams.EDIT
-            ) {
-                await this._conatctSer.updateContact(
-                    this.addContactForm.value.id as string,
-                    this.addContactForm.value as Contact
-                );
-            } else {
-                const data = { ...this.addContactForm.value } as Contact;
-                await this._conatctSer.addContact(data);
-            }
-        } catch (err) {
-            console.error(err);
-            this._toastr.error(err.message);
-        } finally {
-            this._router.navigate(['dashboard/contacts']);
-            this.addContactForm.reset();
-        }
-    }
-
-    addPhone(): void {
-        const contact = this._fb.group({
-            email: [
-                '',
-                [
-                    Validators.required,
-                    Validators.pattern('^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$'),
-                ],
-            ],
-            phone: ['', [Validators.required, Validators.pattern('[0-9]{10}')]],
-        });
-        this.contacts.push(contact);
-    }
-
-    removePhone(i: number): void {
-        this.contacts.removeAt(i);
-    }
-
     get name(): AbstractControl {
         return this.addContactForm.get('name');
-    }
-
-    get phoneNumber(): AbstractControl {
-        return this.addContactForm.get('phone');
     }
 
     get description(): AbstractControl {
         return this.addContactForm.get('description');
     }
 
+    async submit(): Promise<void> {
+        console.log('Submit Ran');
+        try {
+            const contactData = { ...this.addContactForm.value } as Contact;
+            this.isEditMode()
+                ? await this.contactService.updateContact(
+                      contactData.id,
+                      contactData
+                  )
+                : await this.contactService.addContact(contactData);
+
+            this.router.navigate(['dashboard/contacts']);
+            this.addContactForm.reset();
+        } catch (err) {
+            console.log(this.addContactForm);
+            console.error(err);
+            this.toastr.error(err.message);
+        }
+    }
+
+    addPhone(): void {
+        this.contacts.push(this.createContactGroup());
+    }
+
+    removePhone(index: number): void {
+        this.contacts.removeAt(index);
+    }
+
     back(): void {
-        this._location.back();
+        this.location.back();
     }
 }

@@ -1,0 +1,48 @@
+<div class="overflow-x-auto w-full">
+    <table class="table w-full">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Created At</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let metaData of files">
+                <tr>
+                    <td>
+                        <div
+                            (click)="showDetails(metaData.name)"
+                            class="flex items-center gap-3 cursor-pointer"
+                        >
+                            <div>
+                                <div class="font-bold">
+                                    {{ metaData.name }}
+                                </div>
+                                <div class="text-sm opacity-40">
+                                    {{ metaData.timeCreated }}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge badge-ghost badge-sm md:badge-md">{{
+                            metaData.contentType.charAt(0).toUpperCase() +
+                                metaData.contentType.slice(1)
+                        }}</span>
+                    </td>
+                    <td>{{ metaData.timeCreated }}</td>
+                    <th>
+                        <button
+                            (click)="deleteFile(metaData.fullPath)"
+                            class="btn btn-ghost btn-xs"
+                        >
+                            Delete
+                        </button>
+                    </th>
+                </tr>
+            </ng-container>
+        </tbody>
+    </table>
+</div>

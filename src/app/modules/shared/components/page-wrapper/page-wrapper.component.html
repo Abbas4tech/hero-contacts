@@ -1,0 +1,18 @@
+<article @fade>
+    <section
+        class="flex item h-12 md:h-16 gap-4 items-center justify-between md:pb-4 pb-2"
+    >
+        <div class="flex gap-4 items-center justify-center">
+            <breadcrumb></breadcrumb>
+        </div>
+
+        <div class="flex gap-4 items-center">
+            <ng-container *ngIf="dynamicTemplate">
+                <ng-container
+                    *ngTemplateOutlet="dynamicTemplate"
+                ></ng-container>
+            </ng-container>
+        </div>
+    </section>
+    <ng-content select=".router"></ng-content>
+</article>

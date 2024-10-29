@@ -1,11 +1,10 @@
 export interface Contact {
     name: string;
     contacts: ContactsMetaData[];
-    photoUrl?: string;
+    photoUrl: string;
     description: string;
-
     status: Contactstatus;
-    id?: string;
+    id: string;
 }
 
 export enum ContactsQueryParams {

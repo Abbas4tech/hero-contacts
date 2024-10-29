@@ -1,0 +1,20 @@
+<ng-template #uploadTemplate>
+    <storage-meter></storage-meter>
+    <div>
+        <input
+            type="file"
+            name=""
+            id=""
+            hidden
+            (change)="detectFiles($event)"
+            #fileInput
+        />
+        <button
+            (click)="fileElement.nativeElement.click()"
+            class="btn btn-primary"
+        >
+            Upload
+        </button>
+    </div>
+</ng-template>
+<files-table></files-table>

@@ -1,0 +1,13 @@
+<div class="breadcrumbs text-lg font-semibold">
+    <ul>
+        <li *ngFor="let segment of pages">
+            <a
+                (click)="redirect(segment.path)"
+                *ngIf="segment.path !== 'dashboard'"
+                >{{
+                    segment.path.charAt(0).toUpperCase() + segment.path.slice(1)
+                }}</a
+            >
+        </li>
+    </ul>
+</div>

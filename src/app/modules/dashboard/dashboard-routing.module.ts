@@ -15,6 +15,13 @@ const routes: Routes = [
                     ),
             },
             {
+                path: 'files',
+                loadChildren: () =>
+                    import('./modules/user-files/user-files.module').then(
+                        (m) => m.UserFilesModule
+                    ),
+            },
+            {
                 path: 'profile',
                 loadChildren: () =>
                     import('./modules/profile/profile.module').then(

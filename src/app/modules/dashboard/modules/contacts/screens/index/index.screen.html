@@ -1,28 +1,22 @@
-<ng-container *ngIf="list as data; else loading">
-    <article class="p-2">
-        <section
-            class="flex item h-12 md:h-16 justify-between items-center md:px-2 md:pb-4 px-1 pb-2"
+<ng-template #addContactTemplate>
+    <ng-container *ngIf="cards.length">
+        <button
+            (click)="deleteSelected()"
+            class="btn mr-2 md:mr-4 btn-sm md:btn-md"
         >
-            <h1 class="text-base md:text-xl font-bold">Contacts</h1>
-            <div>
-                <ng-container *ngIf="cards.length">
-                    <button
-                        (click)="deleteSelected()"
-                        class="btn mr-2 md:mr-4 btn-sm md:btn-md"
-                    >
-                        Delete {{ cards.length }} Contacts
-                    </button>
-                </ng-container>
-                <a
-                    @fade
-                    routerLink="/dashboard/contacts/details"
-                    [queryParams]="{ mode : 'add'}"
-                    class="btn btn-sm md:btn-md"
-                    >Add</a
-                >
-            </div>
-        </section>
-        <hr />
+            Delete {{ cards.length }} Contacts
+        </button>
+    </ng-container>
+    <a
+        @fade
+        routerLink="/dashboard/contacts/details"
+        [queryParams]="{ mode : 'add'}"
+        class="btn btn-sm btn-primary md:btn-md"
+        >Add</a
+    >
+</ng-template>
+<ng-container *ngIf="list as data; else loading">
+    <article class="">
         <ng-container *ngIf="!data.length; else loadedContacts">
             <section
                 class="flex w-full h-[78vh] justify-center items-center flex-col"
@@ -40,7 +34,7 @@
         </ng-container>
         <ng-template #loadedContacts>
             <section
-                class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8 xl:grid-cols-2 2xl:grid-cols-3 mt-2"
+                class="grid grid-cols-1 gap-4 lg:grid-cols-2 md:gap-8 xl:grid-cols-2 2xl:grid-cols-3 mt-2"
             >
                 <contact-card
                     @fadeIn

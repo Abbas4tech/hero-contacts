@@ -49,7 +49,7 @@ export class DashboardScreen implements OnDestroy {
     }
     closeSidebar(): void {
         const sidebarToggler = this._document.getElementById('overlay');
-        sidebarToggler.click();
+        if (sidebarToggler) sidebarToggler.click();
     }
 
     ngOnDestroy(): void {

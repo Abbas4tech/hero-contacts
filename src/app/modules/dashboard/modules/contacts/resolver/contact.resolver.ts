@@ -15,7 +15,7 @@ export class ContactResolver implements Resolve<Contact> {
         const mode = route.queryParams['mode'];
         if (mode === ContactsQueryParams.ADD) return {} as Contact;
         else {
-            const userId = this._browserStorage.get('userId');
+            const userId = route.queryParams['uid'];
             const dbDoc = await getDoc(doc(this._fire, userId, id));
             return dbDoc.data() as Contact;
         }
