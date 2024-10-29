@@ -32,8 +32,6 @@ import { providePerformance, getPerformance } from '@angular/fire/performance';
         providePerformance(() => getPerformance()),
         ServiceWorkerModule.register('ngsw-worker.js', {
             enabled: true,
-            // Register the ServiceWorker as soon as the application is stable
-            // or after 30 seconds (whichever comes first).
             registrationStrategy: 'registerWhenStable:30000',
         }),
         ToastContainerModule,
@@ -54,6 +52,5 @@ import { providePerformance, getPerformance } from '@angular/fire/performance';
     bootstrap: [AppComponent],
 })
 export class AppModule {
-    // Created a instance of Network Management on overall Application
     constructor(private _network: NetworkManagerService) {}
 }

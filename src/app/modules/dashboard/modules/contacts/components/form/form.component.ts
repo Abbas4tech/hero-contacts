@@ -22,7 +22,6 @@ import { descriptionValidator } from '../../validators/validators';
 @Component({
     selector: 'add-contact',
     templateUrl: './form.component.html',
-    styleUrls: ['./form.component.scss'],
 })
 export class ContactFormPage implements OnInit {
     addContactForm: FormGroup;
