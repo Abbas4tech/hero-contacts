@@ -14,6 +14,8 @@ import { COMMONENUM, Theme } from 'src/app/types/common-types';
 import { AuthService } from '../services/auth.service';
 import { SeoService } from 'src/app/services/seo.service';
 import { errorGenerator } from '../utils/auth.util';
+import { BrowserStorageService } from 'src/app/services/storage.service';
+import { FirebaseError } from '@angular/fire/app';
 
 @Component({
     selector: 'index',
@@ -48,7 +50,8 @@ export class IndexComponent implements OnInit, OnDestroy {
         private fb: UntypedFormBuilder,
         private authService: AuthService,
         private toastr: ToastService,
-        private seoService: SeoService
+        private seoService: SeoService,
+        private _browserStorgage: BrowserStorageService
     ) {
         this.authForm = this.createAuthForm();
         this.initialize();
@@ -64,7 +67,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     private initialize(): void {
         this.commonService.setTitle('Auth');
-        const theme = localStorage.getItem(COMMONENUM.THEME) as Theme;
+        const theme = this._browserStorgage.get(COMMONENUM.THEME) as Theme;
         if (theme) {
             this.commonService.setTheme(theme);
         }
@@ -89,7 +92,6 @@ export class IndexComponent implements OnInit, OnDestroy {
             this.authService.signInWithGoogle().subscribe({
                 next: (value) => {
                     this.router.navigate(['dashboard/contacts']);
-                    this.toastr.success(`Signed in as ${value.displayName}`);
                     this.setLoading(false);
                 },
                 error: (err) => {
@@ -160,7 +162,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {}
 
-    private handleError(err: any): void {
+    private handleError(err: FirebaseError): void {
         this.setLoading(false);
         this.toastr.error(errorGenerator(err.message));
         this.authForm.reset();

@@ -15,7 +15,10 @@ export class Breadcrumb implements OnInit, OnDestroy {
     pages: UrlSegment[] = [];
     routeSubscription: Subscription;
 
-    constructor(private _router: Router, private _route: ActivatedRoute) {}
+    constructor(
+        private _router: Router,
+        private _route: ActivatedRoute
+    ) {}
 
     ngOnInit(): void {
         this.updateRouteState();
@@ -41,8 +44,12 @@ export class Breadcrumb implements OnInit, OnDestroy {
         ].segments;
     }
 
-    redirect(path: string) {
-        this._router.navigate([path]);
+    redirect(path: UrlSegment) {
+        const redirectTo = this.pages
+            .filter((_, i) => i <= this.pages.indexOf(path))
+            .map((e) => e.path)
+            .join('/');
+        this._router.navigate([`/${redirectTo}`]);
     }
 
     ngOnDestroy(): void {

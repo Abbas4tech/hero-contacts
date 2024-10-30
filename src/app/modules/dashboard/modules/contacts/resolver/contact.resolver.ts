@@ -11,6 +11,7 @@ export class ContactResolver implements Resolve<Contact> {
         private _browserStorage: BrowserStorageService
     ) {}
     async resolve(route: ActivatedRouteSnapshot): Promise<Contact> {
+        console.log(route.queryParams);
         const id = route.queryParams['id'];
         const mode = route.queryParams['mode'];
         if (mode === ContactsQueryParams.ADD) return {} as Contact;

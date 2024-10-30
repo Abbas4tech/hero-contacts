@@ -13,6 +13,9 @@ import {
     setDoc,
     updateDoc,
     DocumentData,
+    onSnapshot,
+    collection,
+    getFirestore,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { ToastService } from 'src/app/services/toaster.service';
@@ -29,7 +32,9 @@ export class ContactService {
         private _fire: Firestore,
         private _toastr: ToastService
     ) {
-        this.user = this._auth.user.getValue();
+        this._auth.user.subscribe((user) => {
+            this.user = user;
+        });
     }
 
     getContacts(): Observable<Contact[]> {

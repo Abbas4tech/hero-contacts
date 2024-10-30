@@ -18,7 +18,6 @@ import { initializeApp } from '@firebase/app';
 import { environment } from 'src/environments/environment';
 import { StorageFile } from '../model/types';
 import { BehaviorSubject } from 'rxjs';
-import { timeSince } from '../utils/controllers';
 
 interface StorageState {
     files: StorageFile[];
@@ -38,12 +37,18 @@ export class StorageService implements OnInit {
     private selectedFiles: FileList;
     currentUpload: Upload;
 
-    readonly basePath: string = this._auth.user.value?.email || '';
+    basePath: string;
     readonly maxBucketSizeInBytes = 104857600; // 100MB
 
-    constructor(private _toastr: ToastService, private _auth: AuthService) {
+    constructor(
+        private _toastr: ToastService,
+        private _auth: AuthService
+    ) {
         this.storage = getStorage(initializeApp(environment.firebaseConfig));
         this.loadStorageFiles();
+        this._auth.user.subscribe((user) => {
+            this.basePath = user.email;
+        });
     }
 
     async ngOnInit(): Promise<void> {}

@@ -23,7 +23,7 @@ import { ContactService } from '../../services/contacts.service';
 export class ContactCardComponent implements OnDestroy {
     @Input() item: Contact;
     @Output() onCheck = new EventEmitter<CardStatus>();
-
+    user: User;
     private readonly destroy$ = new Subject<void>();
 
     isMultiSelected = false;
@@ -40,10 +40,7 @@ export class ContactCardComponent implements OnDestroy {
             .subscribe((cards) => {
                 this.isMultiSelected = cards.length > 0;
             });
-    }
-
-    get user(): User {
-        return this.authService.user.getValue();
+        this.authService.user.subscribe((user) => (this.user = user));
     }
 
     onMultiSelect(event: Event): void {
