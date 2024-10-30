@@ -13,9 +13,6 @@ import {
     setDoc,
     updateDoc,
     DocumentData,
-    onSnapshot,
-    collection,
-    getFirestore,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { ToastService } from 'src/app/services/toaster.service';

@@ -83,10 +83,10 @@
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "configurations": {
                         "production": {
-                            "browserTarget": "m-contacts:build:production"
+                            "buildTarget": "m-contacts:build:production"
                         },
                         "development": {
-                            "browserTarget": "m-contacts:build:development"
+                            "buildTarget": "m-contacts:build:development"
                         }
                     },
                     "defaultConfiguration": "development"
@@ -94,7 +94,7 @@
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "browserTarget": "m-contacts:build"
+                        "buildTarget": "m-contacts:build"
                     }
                 },
                 "test": {

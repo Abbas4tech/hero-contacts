@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { inject, Injectable, OnInit } from '@angular/core';
 import { Upload } from './upload';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { ToastService } from 'src/app/services/toaster.service';
@@ -7,15 +7,13 @@ import {
     FirebaseStorage,
     getDownloadURL,
     getMetadata,
-    getStorage,
     listAll,
     ref,
     StorageReference,
     uploadBytesResumable,
     UploadTask,
+    Storage,
 } from '@angular/fire/storage';
-import { initializeApp } from '@firebase/app';
-import { environment } from 'src/environments/environment';
 import { StorageFile } from '../model/types';
 import { BehaviorSubject } from 'rxjs';
 
@@ -28,7 +26,7 @@ interface StorageState {
     providedIn: 'root',
 })
 export class StorageService implements OnInit {
-    private storage: FirebaseStorage;
+    private storage: FirebaseStorage = inject(Storage);
     private storageState = new BehaviorSubject<StorageState>({
         files: [],
         totalConsumption: 0,
@@ -44,11 +42,10 @@ export class StorageService implements OnInit {
         private _toastr: ToastService,
         private _auth: AuthService
     ) {
-        this.storage = getStorage(initializeApp(environment.firebaseConfig));
-        this.loadStorageFiles();
         this._auth.user.subscribe((user) => {
             this.basePath = user.email;
         });
+        this.loadStorageFiles();
     }
 
     async ngOnInit(): Promise<void> {}
