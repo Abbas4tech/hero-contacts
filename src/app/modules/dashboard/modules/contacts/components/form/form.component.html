@@ -46,7 +46,7 @@
                         [ngClass]="{
                             'text-error':
                                 phone.get('phone').errors &&
-                                phone.get('phone').touched
+                                phone.get('phone').touched,
                         }"
                     >
                         {{ i + 1 }}) Phone :
@@ -57,7 +57,7 @@
                         [ngClass]="{
                             'input-error':
                                 phone.get('phone').errors &&
-                                phone.get('phone').touched
+                                phone.get('phone').touched,
                         }"
                         class="input-sm md:input-md input input-bordered w-full"
                     />
@@ -89,7 +89,7 @@
                         [ngClass]="{
                             'text-error':
                                 phone.get('email').errors &&
-                                phone.get('email').touched
+                                phone.get('email').touched,
                         }"
                     >
                         {{ i + 1 }}) Email :
@@ -100,7 +100,7 @@
                         [ngClass]="{
                             'input-error':
                                 phone.get('email').errors &&
-                                phone.get('email').touched
+                                phone.get('email').touched,
                         }"
                         class="input-sm md:input-md input input-bordered w-full"
                     />
@@ -187,7 +187,7 @@
             class="label text-sm md:text-base lg:text-lg font-semibold"
             for="description"
             [ngClass]="{
-                'text-error': description.errors && description.touched
+                'text-error': description.errors && description.touched,
             }"
         >
             Tell us more about him/her :
@@ -196,7 +196,7 @@
         <textarea
             formControlName="description"
             [ngClass]="{
-                'textarea-error': description.errors && description.touched
+                'textarea-error': description.errors && description.touched,
             }"
             class="textarea textarea-bordered"
         ></textarea>

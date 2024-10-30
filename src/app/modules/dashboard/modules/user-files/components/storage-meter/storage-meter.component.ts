@@ -24,7 +24,7 @@ import { takeUntil } from 'rxjs/operators';
                     'progress-warning':
                         percentageConsumption > 50 &&
                         percentageConsumption < 90,
-                    'progress-error': percentageConsumption >= 90
+                    'progress-error': percentageConsumption >= 90,
                 }"
                 max="100"
             ></progress>

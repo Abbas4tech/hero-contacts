@@ -1,4 +1,8 @@
-import { UntypedFormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import {
+    UntypedFormControl,
+    ValidationErrors,
+    ValidatorFn,
+} from '@angular/forms';
 
 export const descriptionValidator = (
     control: UntypedFormControl

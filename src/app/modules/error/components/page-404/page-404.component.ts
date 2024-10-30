@@ -7,7 +7,10 @@ import { Router } from '@angular/router';
     templateUrl: './page-404.component.html',
 })
 export class PageNotFoundComponent {
-    constructor(private _router: Router, private _location: Location) {}
+    constructor(
+        private _router: Router,
+        private _location: Location
+    ) {}
     goHome(): void {
         this._router.navigate(['dashboard/contacts']);
     }
