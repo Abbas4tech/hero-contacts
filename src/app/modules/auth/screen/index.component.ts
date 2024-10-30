@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
     AbstractControl,
-    FormBuilder,
-    FormGroup,
+    UntypedFormBuilder,
+    UntypedFormControl,
+    UntypedFormGroup,
     Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -21,15 +22,30 @@ import { errorGenerator } from '../utils/auth.util';
 })
 export class IndexComponent implements OnInit, OnDestroy {
     isSignUp = true;
-    subscriptions: Subscription[] = [];
-    isLoading = false;
+    subscriptons: Subscription[] = [];
 
-    authForm: FormGroup;
+    isShown = false;
+    authForm = this.fb.group({
+        name: new UntypedFormControl('', [
+            Validators.required,
+            Validators.maxLength(15),
+        ]),
+        email: new UntypedFormControl('', [
+            Validators.required,
+            Validators.email,
+        ]),
+        password: new UntypedFormControl('', [
+            Validators.required,
+            Validators.minLength(6),
+        ]),
+    });
+
+    isLoading = false;
 
     constructor(
         private router: Router,
         private commonService: CommonService,
-        private fb: FormBuilder,
+        private fb: UntypedFormBuilder,
         private authService: AuthService,
         private toastr: ToastService,
         private seoService: SeoService
@@ -38,7 +54,7 @@ export class IndexComponent implements OnInit, OnDestroy {
         this.initialize();
     }
 
-    private createAuthForm(): FormGroup {
+    private createAuthForm(): UntypedFormGroup {
         return this.fb.group({
             name: [''],
             email: ['', [Validators.required, Validators.email]],
@@ -69,7 +85,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     signInWithGoogle(): void {
         this.setLoading(true);
-        this.subscriptions.push(
+        this.subscriptons.push(
             this.authService.signInWithGoogle().subscribe({
                 next: (value) => {
                     this.router.navigate(['dashboard/contacts']);
@@ -95,7 +111,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     private async signIn(email: string, password: string): Promise<void> {
         this.setLoading(true);
-        this.subscriptions.push(
+        this.subscriptons.push(
             this.authService.signIn(email, password).subscribe({
                 next: () => {
                     this.router.navigate(['dashboard/contacts']);
@@ -128,7 +144,7 @@ export class IndexComponent implements OnInit, OnDestroy {
         if (this.isSignUp) {
             this.authForm.addControl(
                 'name',
-                this.fb.control('', [
+                new UntypedFormControl('', [
                     Validators.required,
                     Validators.maxLength(15),
                 ])
@@ -139,7 +155,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.subscriptions.forEach((subs) => subs.unsubscribe());
+        this.subscriptons.forEach((subs) => subs.unsubscribe());
     }
 
     ngOnInit(): void {}

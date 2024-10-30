@@ -1,7 +1,7 @@
-import { FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { UntypedFormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 export const descriptionValidator = (
-    control: FormControl
+    control: UntypedFormControl
 ): ValidationErrors => {
     const description = <string>control.value;
     if (description && description.split(' ').length >= 5) {
@@ -14,7 +14,7 @@ export const descriptionValidator = (
 };
 
 export const noSpace: ValidatorFn = (
-    control: FormControl
+    control: UntypedFormControl
 ): ValidationErrors => {
     const isWhitespace = (control.value || '').trim().length === 0;
     const isValid = !isWhitespace;
