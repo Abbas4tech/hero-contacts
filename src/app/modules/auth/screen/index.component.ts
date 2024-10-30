@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
     AbstractControl,
-    FormBuilder,
-    FormControl,
+    UntypedFormBuilder,
+    UntypedFormControl,
     Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -26,12 +26,12 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     isShown = false;
     authForm = this._fb.group({
-        name: new FormControl('', [
+        name: new UntypedFormControl('', [
             Validators.required,
             Validators.maxLength(15),
         ]),
-        email: new FormControl('', [Validators.required, Validators.email]),
-        password: new FormControl('', [
+        email: new UntypedFormControl('', [Validators.required, Validators.email]),
+        password: new UntypedFormControl('', [
             Validators.required,
             Validators.minLength(6),
         ]),
@@ -41,7 +41,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     constructor(
         private _router: Router,
         private _common: CommonService,
-        private _fb: FormBuilder,
+        private _fb: UntypedFormBuilder,
         private _auth: AuthService,
         private _toastr: ToastService,
         private _seoService: SeoService
@@ -139,7 +139,7 @@ export class IndexComponent implements OnInit, OnDestroy {
         } else {
             this.authForm.addControl(
                 'name',
-                new FormControl('', [
+                new UntypedFormControl('', [
                     Validators.required,
                     Validators.maxLength(15),
                 ]),

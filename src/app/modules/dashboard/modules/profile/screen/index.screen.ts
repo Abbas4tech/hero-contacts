@@ -10,9 +10,9 @@ import { ToastService } from 'src/app/services/toaster.service';
 import { Subscription } from 'rxjs';
 import {
     AbstractControl,
-    FormBuilder,
-    FormControl,
-    FormGroup,
+    UntypedFormBuilder,
+    UntypedFormControl,
+    UntypedFormGroup,
 } from '@angular/forms';
 import { DOCUMENT, Location } from '@angular/common';
 import { noSpace } from '../../contacts/validators/validators';
@@ -28,14 +28,14 @@ export class IndexProfileScreen implements OnDestroy {
     percentage: number;
     user: User;
 
-    updateForm: FormGroup;
+    updateForm: UntypedFormGroup;
     isLoading: boolean;
 
     constructor(
         private _auth: AuthService,
         private _fireStorage: AngularFireStorage,
         private _toastr: ToastService,
-        private _fb: FormBuilder,
+        private _fb: UntypedFormBuilder,
         private _location: Location,
         private _common: CommonService,
         @Inject(DOCUMENT) private _document: Document
@@ -47,7 +47,7 @@ export class IndexProfileScreen implements OnDestroy {
             })
         );
         this.updateForm = this._fb.group({
-            username: new FormControl(this.user.displayName, [noSpace]),
+            username: new UntypedFormControl(this.user.displayName, [noSpace]),
         });
     }
     selectFile(): void {
