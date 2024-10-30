@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { StorageFile } from '../../model/types';
 import { StorageService } from '../../services/storage.service';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -37,6 +37,7 @@ export class StorageMeter implements OnInit, OnDestroy {
     currentConsumptionInFormat = '';
     maxBucketConsumptionInFormat = '';
     percentageConsumption = 0;
+    subs: Subscription;
 
     private destroy$ = new Subject<void>();
 
@@ -46,7 +47,7 @@ export class StorageMeter implements OnInit, OnDestroy {
         this.maxBucketConsumptionInFormat =
             this._storageService.maxBucketSizeInFormat;
 
-        this._storageService.storageState$
+        this.subs = this._storageService.storageState$
             .pipe(takeUntil(this.destroy$))
             .subscribe((state) => {
                 this.files = state.files;
@@ -71,5 +72,6 @@ export class StorageMeter implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+        this.subs.unsubscribe();
     }
 }

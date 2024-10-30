@@ -61,10 +61,11 @@ export class IndexProfileScreen implements OnDestroy {
                 this.task = this._fireStorage.upload(filepath, file, {
                     cacheControl: 'true',
                 });
-
-                this.task
-                    .percentageChanges()
-                    .subscribe((count) => (this.percentage = count));
+                this.suscriptions.push(
+                    this.task
+                        .percentageChanges()
+                        .subscribe((count) => (this.percentage = count))
+                );
 
                 const url = (await fileRef
                     .getDownloadURL()

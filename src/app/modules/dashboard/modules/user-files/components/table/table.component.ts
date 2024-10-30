@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { StorageService } from '../../services/storage.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { StorageFile } from '../../model/types';
 import { Router } from '@angular/router';
 
@@ -8,8 +8,9 @@ import { Router } from '@angular/router';
     selector: 'files-table',
     templateUrl: './table.component.html',
 })
-export class FilesTable implements OnInit {
+export class FilesTable implements OnInit, OnDestroy {
     files: StorageFile[] = [];
+    subs: Subscription;
     private destroy$ = new Subject<void>();
     constructor(
         private _uploadService: StorageService,
@@ -29,10 +30,16 @@ export class FilesTable implements OnInit {
     }
 
     ngOnInit(): void {
-        this._uploadService.storageState$
+        this.subs = this._uploadService.storageState$
             .pipe(takeUntil(this.destroy$))
             .subscribe((state) => {
                 this.files = state.files;
             });
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+        this.subs.unsubscribe();
     }
 }
