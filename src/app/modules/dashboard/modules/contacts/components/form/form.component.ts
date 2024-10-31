@@ -4,7 +4,7 @@ import {
     ContactsQueryParams,
     Contact,
 } from '../../model/contacts.model';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { CommonService } from 'src/app/services/common.service';
 import {
@@ -14,19 +14,27 @@ import {
     Validators,
     AbstractControl,
 } from '@angular/forms';
+import { User } from '@angular/fire/auth';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToastService } from 'src/app/services/toaster.service';
 import { randomAvatarUrlGenerator } from 'src/app/modules/auth/utils/auth.util';
-import { descriptionValidator } from '../../validators/validators';
+import {
+    descriptionValidator,
+    shouldUnique,
+} from '../../validators/validators';
+
+import { AuthService } from 'src/app/modules/auth/services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'add-contact',
     templateUrl: './form.component.html',
 })
-export class ContactFormPage implements OnInit {
+export class ContactFormPage implements OnInit, OnDestroy {
     addContactForm: UntypedFormGroup;
     statuses: Contactstatus[] = ['active', 'inactive'];
-
+    subs: Subscription[] = [];
+    user: User;
     constructor(
         private commonService: CommonService,
         private location: Location,
@@ -34,9 +42,13 @@ export class ContactFormPage implements OnInit {
         private toastr: ToastService,
         private router: Router,
         private route: ActivatedRoute,
-        private contactService: ContactService
+        private contactService: ContactService,
+        private _auth: AuthService
     ) {
         this.commonService.setTitle(this.isEditMode ? 'Edit' : 'Add');
+        this.subs.push(
+            this._auth.user.subscribe((value) => (this.user = value))
+        );
     }
 
     ngOnInit(): void {
@@ -46,13 +58,21 @@ export class ContactFormPage implements OnInit {
 
     private initForm(): void {
         this.addContactForm = this.fb.group({
-            name: ['', Validators.required],
+            name: [
+                '',
+                [Validators.required],
+                [shouldUnique(this.user.uid, 'name')],
+            ],
             contacts: this.fb.array([this.createContactGroup()]),
             status: ['active'],
             description: ['', [Validators.required, descriptionValidator]],
             id: Math.random(),
             photoUrl: randomAvatarUrlGenerator(),
         });
+    }
+
+    ngOnDestroy(): void {
+        this.subs.forEach((s) => s.unsubscribe());
     }
 
     private loadContactData(): void {

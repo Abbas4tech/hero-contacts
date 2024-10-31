@@ -22,6 +22,11 @@
                 <ng-container *ngIf="name.errors['required']"
                     >Name is required</ng-container
                 >
+                <ng-container
+                    *ngIf="!name.errors['required'] && name.errors['nonUnique']"
+                >
+                    {{ name.errors['nonUnique'].message }}
+                </ng-container>
             </p>
         </section>
     </section>
