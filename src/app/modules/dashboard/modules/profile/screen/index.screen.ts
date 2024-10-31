@@ -1,11 +1,10 @@
-import { Component, Inject, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { updateProfile, User } from '@angular/fire/auth';
 import {
     AngularFireStorage,
     AngularFireUploadTask,
 } from '@angular/fire/compat/storage';
-import { TStoFix } from 'src/app/types/common-types';
 import { ToastService } from 'src/app/services/toaster.service';
 import { Subscription } from 'rxjs';
 import {
@@ -14,7 +13,7 @@ import {
     UntypedFormControl,
     UntypedFormGroup,
 } from '@angular/forms';
-import { DOCUMENT, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import { noSpace } from '../../contacts/validators/validators';
 import { CommonService } from 'src/app/services/common.service';
 @Component({
@@ -24,7 +23,7 @@ import { CommonService } from 'src/app/services/common.service';
 export class IndexProfileScreen implements OnDestroy {
     task: AngularFireUploadTask;
     suscriptions: Subscription[] = [];
-
+    @ViewChild('fileInput') fileInput: ElementRef<HTMLInputElement>;
     percentage: number;
     user: User;
 
@@ -37,8 +36,7 @@ export class IndexProfileScreen implements OnDestroy {
         private _toastr: ToastService,
         private _fb: UntypedFormBuilder,
         private _location: Location,
-        private _common: CommonService,
-        @Inject(DOCUMENT) private _document: Document
+        private _common: CommonService
     ) {
         this._common.setTitle('Profile');
         this.suscriptions.push(
@@ -51,22 +49,23 @@ export class IndexProfileScreen implements OnDestroy {
         });
     }
     selectFile(): void {
-        const fileInput = this._document.getElementById('avatar');
-        fileInput.click();
+        this.fileInput.nativeElement.click();
     }
-    async uploadprofile(event: TStoFix) {
+    async uploadprofile(event: Event) {
         try {
-            const file: Blob = event.target.files[0];
+            const target = event.target as HTMLInputElement;
+            const file: Blob = target.files[0];
             if (file.type.includes('image/')) {
                 const filepath = `${this.user.uid}.png`;
                 const fileRef = this._fireStorage.ref(filepath);
                 this.task = this._fireStorage.upload(filepath, file, {
                     cacheControl: 'true',
                 });
-
-                this.task
-                    .percentageChanges()
-                    .subscribe((count) => (this.percentage = count));
+                this.suscriptions.push(
+                    this.task
+                        .percentageChanges()
+                        .subscribe((count) => (this.percentage = count))
+                );
 
                 const url = (await fileRef
                     .getDownloadURL()

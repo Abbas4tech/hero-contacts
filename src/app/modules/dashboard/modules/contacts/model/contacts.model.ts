@@ -23,7 +23,7 @@ export interface ContactsMetaData {
     email: string;
 }
 
-export enum COLLECTIONS {
-    CONTACTS = 'contacts',
-    USERS = 'Users',
+export enum ContactsModulePages {
+    ADD_CONTACT = 'add-contact',
+    EDIT_CONTACT = 'edit-contact',
 }

@@ -1,4 +1,3 @@
-import { errorGenerator, randomAvatarUrlGenerator } from './../utils/auth.util';
 import { Injectable } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import {
@@ -17,29 +16,29 @@ import {
     catchError,
     from,
     map,
-    tap,
     throwError,
     Observable,
 } from 'rxjs';
 import { BrowserStorageService } from 'src/app/services/storage.service';
 import { ToastService } from 'src/app/services/toaster.service';
+import { errorGenerator, randomAvatarUrlGenerator } from './../utils/auth.util';
 
 @Injectable({
     providedIn: 'root',
 })
 export class AuthService {
     user: BehaviorSubject<User> = new BehaviorSubject<User>(null);
+
     constructor(
-        private _auth: Auth,
-        private _toastr: ToastService,
-        private _router: Router,
-        private _provider: GoogleAuthProvider,
-        private _browserStorage: BrowserStorageService
+        private auth: Auth,
+        private toastr: ToastService,
+        private router: Router,
+        private googleProvider: GoogleAuthProvider,
+        private storage: BrowserStorageService
     ) {
-        this._auth.onAuthStateChanged((user) => {
+        this.auth.onAuthStateChanged((user) => {
             if (user) {
-                this.user.next(user);
-                this._browserStorage.set('userId', user.uid);
+                this.setUser(user);
             }
         });
     }
@@ -51,7 +50,7 @@ export class AuthService {
     ): Promise<void> {
         try {
             const userCreds = await createUserWithEmailAndPassword(
-                this._auth,
+                this.auth,
                 email,
                 password
             );
@@ -59,50 +58,61 @@ export class AuthService {
                 displayName: fullname,
                 photoURL: randomAvatarUrlGenerator(),
             });
-            this.user.next(userCreds.user);
-            this._browserStorage.set('userId', userCreds.user.uid);
-            this._router.navigate(['dashboard/contacts']);
-            this._toastr.success(`Logged In as ${this.user.value.displayName}`);
+            this.setUser(userCreds.user, `Logged In as ${fullname}`);
+            this.router.navigate(['dashboard/contacts']);
         } catch (err) {
-            if (err instanceof FirebaseError) {
-                console.error('Firebase Error', err);
-                const errorMessage = errorGenerator(err.message);
-                this._toastr.error(errorMessage);
-            }
+            this.handleAuthError(err);
         }
     }
 
     signInWithGoogle(): Observable<User> {
-        return from(signInWithPopup(this._auth, this._provider)).pipe(
-            map(({ user }) => user),
-            tap((data) => {
-                this.user.next(data);
-                this._browserStorage.set('userId', data.uid);
+        return from(signInWithPopup(this.auth, this.googleProvider)).pipe(
+            map(({ user }) => {
+                this.setUser(user, `Signed in as ${user.displayName}`);
+                return user;
             }),
-            catchError((err: FirebaseError) => throwError(err))
+            catchError((err: FirebaseError) => this.handleAuthError(err))
         );
     }
 
     signIn(email: string, password: string): Observable<User> {
         return from(
-            signInWithEmailAndPassword(this._auth, email, password)
+            signInWithEmailAndPassword(this.auth, email, password)
         ).pipe(
-            map(({ user }) => user),
-            tap((data) => this.user.next(data)),
-            catchError((err) => throwError(err))
+            map(({ user }) => {
+                this.setUser(user, `Welcome back, ${user.displayName}`);
+                return user;
+            }),
+            catchError((err) => this.handleAuthError(err))
         );
     }
 
     async signOut(): Promise<void> {
         try {
-            await signOut(this._auth);
-            this.user.next(null);
-            this._browserStorage.clean('userId');
-            this._router.navigate(['auth']);
-            this._toastr.success('Loggedout successfully');
+            await signOut(this.auth);
+            this.clearUser();
+            this.router.navigate(['auth']);
+            this.toastr.success('Logged out successfully');
         } catch (error) {
             console.error(error);
-            this._toastr.error('Loggingout failed!');
+            this.toastr.error('Log out failed');
         }
+    }
+
+    private setUser(user: User, message?: string): void {
+        this.user.next(user);
+        this.storage.set('userId', user.uid);
+        if (message) this.toastr.success(message);
+    }
+
+    private clearUser(): void {
+        this.user.next(null);
+        this.storage.clean('userId');
+    }
+
+    private handleAuthError(error: FirebaseError): Observable<never> {
+        const errorMessage = errorGenerator(error.message);
+        this.toastr.error(errorMessage);
+        return throwError(error);
     }
 }

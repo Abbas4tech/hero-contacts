@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { SeoService } from 'src/app/services/seo.service';
+import { BrowserStorageService } from 'src/app/services/storage.service';
 
 @Component({
     selector: 'dashboard-screeen',
@@ -23,7 +24,8 @@ export class DashboardScreen implements OnDestroy {
         private _auth: AuthService,
         private _router: Router,
         @Inject(DOCUMENT) private _document: Document,
-        private _secService: SeoService
+        private _secService: SeoService,
+        private _browserStorgage: BrowserStorageService
     ) {
         this._common.setTitle('Dashboard');
         this._secService.setSeoData();
@@ -39,7 +41,7 @@ export class DashboardScreen implements OnDestroy {
                     this.contentLoaded = true;
             })
         );
-        const theme = localStorage.getItem(COMMONENUM.THEME) as Theme;
+        const theme = this._browserStorgage.get(COMMONENUM.THEME) as Theme;
         if (theme) {
             this._common.setTheme(theme);
         }

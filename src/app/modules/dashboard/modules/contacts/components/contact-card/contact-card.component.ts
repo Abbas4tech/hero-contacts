@@ -1,14 +1,17 @@
 import { CardStatus, ContactsQueryParams } from './../../model/contacts.model';
 import {
     Component,
+    ElementRef,
     EventEmitter,
     Input,
     OnDestroy,
     Output,
+    ViewChild,
 } from '@angular/core';
 import { User } from '@angular/fire/auth';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { LayoutService } from 'src/app/modules/dashboard/services/layout.service';
 import { Contact } from '../../model/contacts.model';
@@ -20,68 +23,77 @@ import { ContactService } from '../../services/contacts.service';
     styleUrls: ['./contact-card.component.scss'],
 })
 export class ContactCardComponent implements OnDestroy {
-    user: User;
     @Input() item: Contact;
     @Output() onCheck = new EventEmitter<CardStatus>();
-    subsriptions: Subscription[] = [];
+    @ViewChild('multiSelectCheckbox')
+    multiSelectCheckbox: ElementRef<HTMLInputElement>;
+    user: User;
+    private readonly destroy$ = new Subject<void>();
 
     isMultiSelected = false;
-    selectedIds: string[];
+
     constructor(
-        private _layout: LayoutService,
-        private _contactSer: ContactService,
-        private _router: Router,
-        private _route: ActivatedRoute,
-        private _auth: AuthService
+        private layoutService: LayoutService,
+        private contactService: ContactService,
+        private router: Router,
+        private route: ActivatedRoute,
+        private authService: AuthService
     ) {
-        this.subsriptions.push(
-            this._layout.selectedCards.subscribe((cards) => {
-                if (cards.length >= 1) {
-                    this.isMultiSelected = true;
-                } else {
-                    this.isMultiSelected = false;
-                }
-            })
-        );
-        this.user = this._auth.user.getValue();
+        this.layoutService.selectedCards
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((cards) => {
+                this.isMultiSelected = cards.length > 0;
+            });
+        this.authService.user
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((user) => {
+                this.user = user;
+            });
     }
 
     onMultiSelect(event: Event): void {
         event.stopPropagation();
+        const input = event.target as HTMLInputElement;
         this.onCheck.emit({
-            id: (event.target as HTMLInputElement).value,
-            checked: (event.target as HTMLInputElement).checked,
+            id: input.value,
+            checked: input.checked,
         } as CardStatus);
     }
-    detailed(id: string, event: Event) {
-        event.stopPropagation();
-        this._router.navigate(['view'], {
-            queryParams: {
-                id,
-                uid: this.user.uid,
-            },
-            relativeTo: this._route,
+
+    detailed(id: string, event: Event): void {
+        this.navigateWithStopPropagation(event, ['details'], {
+            id,
+            uid: this.user.uid,
         });
     }
 
-    edit(id: string, event: Event) {
-        event.stopPropagation();
-        this._router.navigate(['details'], {
-            relativeTo: this._route,
-            queryParams: {
-                [ContactsQueryParams.MODE]: ContactsQueryParams.EDIT,
-                id,
-                uid: this.user.uid,
-            },
-            queryParamsHandling: 'merge',
+    edit(id: string, event: Event): void {
+        this.navigateWithStopPropagation(event, ['edit-contact'], {
+            [ContactsQueryParams.MODE]: ContactsQueryParams.EDIT,
+            id,
+            uid: this.user.uid,
         });
     }
 
     async delete(id: string, event: Event): Promise<void> {
         event.stopPropagation();
-        await this._contactSer.deleteContact(id);
+        await this.contactService.deleteContact(id);
     }
+
+    private navigateWithStopPropagation(
+        event: Event,
+        commands: string[],
+        queryParams: object
+    ): void {
+        event.stopPropagation();
+        this.router.navigate(commands, {
+            queryParams,
+            relativeTo: this.route,
+        });
+    }
+
     ngOnDestroy(): void {
-        this.subsriptions.forEach((e) => e.unsubscribe());
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 }

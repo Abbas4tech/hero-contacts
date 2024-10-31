@@ -1,6 +1,7 @@
 <div
     class="main-container"
     (click)="!isMultiSelected ? detailed(item.id, $event) : null"
+    [ngClass]="{ '!opacity-30': multiSelectCheckbox.checked }"
 >
     <figure data-tip="Avatar" class="tooltip tooltip-bottom w-32">
         <img
@@ -17,6 +18,7 @@
             </h2>
 
             <input
+                #multiSelectCheckbox
                 type="checkbox"
                 [value]="item.id"
                 (click)="onMultiSelect($event)"
@@ -38,7 +40,7 @@
             <span
                 [ngClass]="{
                     'text-error': item.status === 'inactive',
-                    'text-success': item.status === 'active'
+                    'text-success': item.status === 'active',
                 }"
                 class="inline-block ml-2"
             >
@@ -49,7 +51,7 @@
             <button
                 class="btn btn-sm md:btn-md btn-primary tooltip tooltip-bottom"
                 data-tip="Edit this contact!"
-                [ngClass]="{ 'btn-disabled': isMultiSelected }"
+                [ngClass]="{ 'pointer-events-none': isMultiSelected }"
                 (click)="edit(item.id, $event)"
             >
                 Edit
@@ -57,7 +59,7 @@
             <button
                 class="btn btn-sm md:btn-md btn-error tooltip tooltip-bottom"
                 data-tip="Delete this contact!"
-                [ngClass]="{ 'btn-disabled': isMultiSelected }"
+                [ngClass]="{ 'pointer-events-none': isMultiSelected }"
                 (click)="delete(item.id, $event)"
             >
                 Delete

@@ -2,7 +2,7 @@
     @apply card card-side bg-base-200 hover:bg-base-300 opacity-90 shadow-xl hover:scale-105 transition-all cursor-pointer;
     &:hover {
         figure > img {
-            filter: brightness(100%);
+            @apply brightness-100;
         }
     }
 }

@@ -4,6 +4,7 @@ import {
     NavigationEnd,
     Router,
     UrlSegment,
+    PRIMARY_OUTLET,
 } from '@angular/router';
 import { filter, map, Subscription } from 'rxjs';
 
@@ -15,11 +16,12 @@ export class Breadcrumb implements OnInit, OnDestroy {
     pages: UrlSegment[] = [];
     routeSubscription: Subscription;
 
-    constructor(private _router: Router, private _route: ActivatedRoute) {}
+    constructor(
+        private _router: Router,
+        private _route: ActivatedRoute
+    ) {}
 
     ngOnInit(): void {
-        console.log('In Init');
-
         this.updateRouteState();
 
         this.routeSubscription = this._router.events
@@ -27,26 +29,28 @@ export class Breadcrumb implements OnInit, OnDestroy {
                 filter((event) => event instanceof NavigationEnd),
                 map(() => ({
                     path: this._router.parseUrl(this._router.url).root.children[
-                        'primary'
+                        PRIMARY_OUTLET
                     ].segments,
                     queryParams: this._route.snapshot.queryParams,
                 }))
             )
             .subscribe((routeState) => {
-                console.log('Route State:', routeState);
                 this.pages = routeState.path;
             });
     }
 
     private updateRouteState(): void {
         this.pages = this._router.parseUrl(this._router.url).root.children[
-            'primary'
+            PRIMARY_OUTLET
         ].segments;
-        console.log('Initial Route State:', this.pages);
     }
 
-    redirect(path: string) {
-        this._router.navigate([path]);
+    redirect(path: UrlSegment) {
+        const redirectTo = this.pages
+            .filter((_, i) => i <= this.pages.indexOf(path))
+            .map(({ path }) => path)
+            .join('/');
+        this._router.navigate([`/${redirectTo}`]);
     }
 
     ngOnDestroy(): void {

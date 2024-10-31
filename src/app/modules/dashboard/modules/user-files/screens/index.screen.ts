@@ -20,7 +20,7 @@ export class UserFilesScreen implements OnInit, OnDestroy {
     private destroy$ = new Subject<void>();
     @ViewChild('fileInput') fileElement: ElementRef<HTMLInputElement>;
     @ViewChild('uploadTemplate')
-    uploadTemplate: TemplateRef<HTMLDivElement>;
+    uploadTemplate: TemplateRef<HTMLElement[]>;
 
     constructor(
         private _uploadService: StorageService,

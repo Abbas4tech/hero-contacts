@@ -3,6 +3,7 @@ import {
     AbstractControl,
     UntypedFormBuilder,
     UntypedFormControl,
+    UntypedFormGroup,
     Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -13,11 +14,12 @@ import { COMMONENUM, Theme } from 'src/app/types/common-types';
 import { AuthService } from '../services/auth.service';
 import { SeoService } from 'src/app/services/seo.service';
 import { errorGenerator } from '../utils/auth.util';
+import { BrowserStorageService } from 'src/app/services/storage.service';
+import { FirebaseError } from '@angular/fire/app';
 
 @Component({
     selector: 'index',
     templateUrl: './index.component.html',
-    styleUrls: ['./index.component.scss'],
     providers: [AuthService],
 })
 export class IndexComponent implements OnInit, OnDestroy {
@@ -25,12 +27,15 @@ export class IndexComponent implements OnInit, OnDestroy {
     subscriptons: Subscription[] = [];
 
     isShown = false;
-    authForm = this._fb.group({
+    authForm = this.fb.group({
         name: new UntypedFormControl('', [
             Validators.required,
             Validators.maxLength(15),
         ]),
-        email: new UntypedFormControl('', [Validators.required, Validators.email]),
+        email: new UntypedFormControl('', [
+            Validators.required,
+            Validators.email,
+        ]),
         password: new UntypedFormControl('', [
             Validators.required,
             Validators.minLength(6),
@@ -38,27 +43,35 @@ export class IndexComponent implements OnInit, OnDestroy {
     });
 
     isLoading = false;
+
     constructor(
-        private _router: Router,
-        private _common: CommonService,
-        private _fb: UntypedFormBuilder,
-        private _auth: AuthService,
-        private _toastr: ToastService,
-        private _seoService: SeoService
+        private router: Router,
+        private commonService: CommonService,
+        private fb: UntypedFormBuilder,
+        private authService: AuthService,
+        private toastr: ToastService,
+        private seoService: SeoService,
+        private _browserStorgage: BrowserStorageService
     ) {
-        this._common.setTitle('Auth');
-        const theme = localStorage.getItem(COMMONENUM.THEME) as Theme;
-        if (theme) {
-            this._common.setTheme(theme);
-        }
-        this._seoService.setSeoData();
-        setTimeout(() => {
-            this.isShown = true;
-        }, 2000);
+        this.authForm = this.createAuthForm();
+        this.initialize();
     }
 
-    closeBanner(b: boolean) {
-        this.isShown = false;
+    private createAuthForm(): UntypedFormGroup {
+        return this.fb.group({
+            name: [''],
+            email: ['', [Validators.required, Validators.email]],
+            password: ['', [Validators.required, Validators.minLength(6)]],
+        });
+    }
+
+    private initialize(): void {
+        this.commonService.setTitle('Auth');
+        const theme = this._browserStorgage.get(COMMONENUM.THEME) as Theme;
+        if (theme) {
+            this.commonService.setTheme(theme);
+        }
+        this.seoService.setSeoData();
     }
 
     get email(): AbstractControl {
@@ -72,89 +85,94 @@ export class IndexComponent implements OnInit, OnDestroy {
     get name(): AbstractControl {
         return this.authForm.get('name');
     }
+
     signInWithGoogle(): void {
-        this.isLoading = true;
+        this.setLoading(true);
         this.subscriptons.push(
-            this._auth.signInWithGoogle().subscribe({
+            this.authService.signInWithGoogle().subscribe({
                 next: (value) => {
-                    this._router.navigate(['dashboard/contacts']);
-                    this._toastr.success(`Signed in as ${value.displayName}`);
-                    this.isLoading = false;
+                    this.router.navigate(['dashboard/contacts']);
+                    this.setLoading(false);
                 },
                 error: (err) => {
-                    this.isLoading = false;
-                    console.log(err.message);
-                    this._toastr.error(errorGenerator(err.message));
+                    this.handleError(err);
                 },
-                complete: () => {},
             })
         );
     }
 
     async submitForm(): Promise<void> {
-        const { email, password, name } = this.authForm.value;
-        if (this.isSignUp) {
-            this.signUp(name, email, password);
-        } else {
-            this.signIn(email, password);
-        }
+        const { email, password, name } = this.authForm.value as Record<
+            string,
+            string
+        >;
+        this.isSignUp
+            ? await this.signUp(name, email, password)
+            : await this.signIn(email, password);
     }
 
-    async signIn(email: string, password: string): Promise<void> {
-        this.isLoading = true;
+    private async signIn(email: string, password: string): Promise<void> {
+        this.setLoading(true);
         this.subscriptons.push(
-            this._auth.signIn(email, password).subscribe({
-                next: (value) => {
-                    this._router.navigate(['dashboard/contacts']);
-                    this._toastr.success(`Loggedin Successfully!`);
+            this.authService.signIn(email, password).subscribe({
+                next: () => {
+                    this.router.navigate(['dashboard/contacts']);
                     this.authForm.reset();
-                    this.isLoading = false;
+                    this.setLoading(false);
                 },
                 error: (err) => {
-                    this.isLoading = false;
-                    this._toastr.error(errorGenerator(err.message));
-                    this.authForm.reset();
+                    this.handleError(err);
                 },
             })
         );
     }
 
-    async signUp(name: string, email: string, password: string): Promise<void> {
+    private async signUp(
+        name: string,
+        email: string,
+        password: string
+    ): Promise<void> {
+        this.setLoading(true);
         try {
-            this.isLoading = true;
-            await this._auth.signUp(name, email, password);
+            await this.authService.signUp(name, email, password);
             this.authForm.reset();
-            this.isLoading = false;
         } catch (err) {
-            console.error(err);
-            this._toastr.error(errorGenerator(err.message));
-            this.isLoading = false;
+            this.handleError(err);
         }
     }
 
     toggleMode(): void {
         this.isSignUp = !this.isSignUp;
-        if (!this.isSignUp) {
-            this.authForm.removeControl('name', { emitEvent: true });
-        } else {
+        if (this.isSignUp) {
             this.authForm.addControl(
                 'name',
                 new UntypedFormControl('', [
                     Validators.required,
                     Validators.maxLength(15),
-                ]),
-                {
-                    emitEvent: true,
-                }
+                ])
             );
+        } else {
+            this.authForm.removeControl('name');
         }
     }
+
     ngOnDestroy(): void {
         this.subscriptons.forEach((subs) => subs.unsubscribe());
     }
 
     ngOnInit(): void {}
+
+    private handleError(err: FirebaseError): void {
+        this.setLoading(false);
+        this.toastr.error(errorGenerator(err.message));
+        this.authForm.reset();
+    }
+
+    private setLoading(loading: boolean): void {
+        this.isLoading = loading;
+    }
+
     goToDashboard(): void {
-        this._router.navigate(['dashboard']);
+        this.router.navigate(['dashboard']);
     }
 }
