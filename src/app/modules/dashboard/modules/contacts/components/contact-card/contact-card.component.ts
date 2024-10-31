@@ -1,10 +1,12 @@
 import { CardStatus, ContactsQueryParams } from './../../model/contacts.model';
 import {
     Component,
+    ElementRef,
     EventEmitter,
     Input,
     OnDestroy,
     Output,
+    ViewChild,
 } from '@angular/core';
 import { User } from '@angular/fire/auth';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -23,6 +25,8 @@ import { ContactService } from '../../services/contacts.service';
 export class ContactCardComponent implements OnDestroy {
     @Input() item: Contact;
     @Output() onCheck = new EventEmitter<CardStatus>();
+    @ViewChild('multiSelectCheckbox')
+    multiSelectCheckbox: ElementRef<HTMLInputElement>;
     user: User;
     private readonly destroy$ = new Subject<void>();
 
@@ -40,7 +44,11 @@ export class ContactCardComponent implements OnDestroy {
             .subscribe((cards) => {
                 this.isMultiSelected = cards.length > 0;
             });
-        this.authService.user.subscribe((user) => (this.user = user));
+        this.authService.user
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((user) => {
+                this.user = user;
+            });
     }
 
     onMultiSelect(event: Event): void {
@@ -53,23 +61,18 @@ export class ContactCardComponent implements OnDestroy {
     }
 
     detailed(id: string, event: Event): void {
-        this.navigateWithStopPropagation(event, ['view'], {
+        this.navigateWithStopPropagation(event, ['details'], {
             id,
             uid: this.user.uid,
         });
     }
 
     edit(id: string, event: Event): void {
-        this.navigateWithStopPropagation(
-            event,
-            ['details'],
-            {
-                [ContactsQueryParams.MODE]: ContactsQueryParams.EDIT,
-                id,
-                uid: this.user.uid,
-            },
-            'merge'
-        );
+        this.navigateWithStopPropagation(event, ['edit-contact'], {
+            [ContactsQueryParams.MODE]: ContactsQueryParams.EDIT,
+            id,
+            uid: this.user.uid,
+        });
     }
 
     async delete(id: string, event: Event): Promise<void> {
@@ -80,14 +83,12 @@ export class ContactCardComponent implements OnDestroy {
     private navigateWithStopPropagation(
         event: Event,
         commands: string[],
-        queryParams: object,
-        queryParamsHandling: 'merge' | 'preserve' = 'preserve'
+        queryParams: object
     ): void {
         event.stopPropagation();
         this.router.navigate(commands, {
             queryParams,
             relativeTo: this.route,
-            queryParamsHandling,
         });
     }
 

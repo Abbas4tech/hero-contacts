@@ -11,14 +11,21 @@ export class ContactResolver implements Resolve<Contact> {
         private _browserStorage: BrowserStorageService
     ) {}
     async resolve(route: ActivatedRouteSnapshot): Promise<Contact> {
-        console.log(route.queryParams);
+        const userId = route.queryParams['uid'];
+
         const id = route.queryParams['id'];
+
         const mode = route.queryParams['mode'];
+        console.log(route.queryParams, this._fire, userId, id);
         if (mode === ContactsQueryParams.ADD) return {} as Contact;
         else {
-            const userId = route.queryParams['uid'];
-            const dbDoc = await getDoc(doc(this._fire, userId, id));
-            return dbDoc.data() as Contact;
+            try {
+                const dbDoc = await getDoc(doc(this._fire, userId, id));
+                return dbDoc.data() as Contact;
+            } catch (err) {
+                console.log('Error in firebase data retirvation', err);
+                return {} as Contact;
+            }
         }
     }
 }

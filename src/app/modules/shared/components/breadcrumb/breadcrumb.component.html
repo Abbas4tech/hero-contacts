@@ -6,6 +6,7 @@
                 *ngIf="segment.path !== 'dashboard'"
                 >{{
                     segment.path.charAt(0).toUpperCase() + segment.path.slice(1)
+                        | capitalize: '-'
                 }}</a
             >
         </li>

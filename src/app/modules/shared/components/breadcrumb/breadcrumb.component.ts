@@ -4,6 +4,7 @@ import {
     NavigationEnd,
     Router,
     UrlSegment,
+    PRIMARY_OUTLET,
 } from '@angular/router';
 import { filter, map, Subscription } from 'rxjs';
 
@@ -28,7 +29,7 @@ export class Breadcrumb implements OnInit, OnDestroy {
                 filter((event) => event instanceof NavigationEnd),
                 map(() => ({
                     path: this._router.parseUrl(this._router.url).root.children[
-                        'primary'
+                        PRIMARY_OUTLET
                     ].segments,
                     queryParams: this._route.snapshot.queryParams,
                 }))
@@ -40,14 +41,14 @@ export class Breadcrumb implements OnInit, OnDestroy {
 
     private updateRouteState(): void {
         this.pages = this._router.parseUrl(this._router.url).root.children[
-            'primary'
+            PRIMARY_OUTLET
         ].segments;
     }
 
     redirect(path: UrlSegment) {
         const redirectTo = this.pages
             .filter((_, i) => i <= this.pages.indexOf(path))
-            .map((e) => e.path)
+            .map(({ path }) => path)
             .join('/');
         this._router.navigate([`/${redirectTo}`]);
     }

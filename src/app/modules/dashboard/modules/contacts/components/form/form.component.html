@@ -228,7 +228,7 @@
         </button>
         <button
             type="submit"
-            [disabled]="!addContactForm.valid"
+            [disabled]="!addContactForm.valid || !addContactForm.dirty"
             class="btn-success btn btn-sm md:btn-md"
         >
             Submit
