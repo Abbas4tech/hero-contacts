@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { StorageService } from '../../services/storage.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { StorageFile } from '../../model/types';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'files-table',
@@ -14,15 +14,12 @@ export class FilesTable implements OnInit, OnDestroy {
     private destroy$ = new Subject<void>();
     constructor(
         private _uploadService: StorageService,
-        private _router: Router
+        private _router: Router,
+        private route: ActivatedRoute
     ) {}
 
     showDetails(name: string) {
-        this._router.navigate(['dashboard/files/details'], {
-            queryParams: {
-                name,
-            },
-        });
+        this._router.navigate([name], { relativeTo: this.route });
     }
 
     async deleteFile(path: string) {
@@ -34,6 +31,7 @@ export class FilesTable implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroy$))
             .subscribe((state) => {
                 this.files = state.files;
+                console.log(this.files);
             });
     }
 

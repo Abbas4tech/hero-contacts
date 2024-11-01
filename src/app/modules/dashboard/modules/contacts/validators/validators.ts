@@ -13,14 +13,6 @@ import {
     AsyncValidatorFn,
 } from '@angular/forms';
 
-import { of, Observable, from } from 'rxjs';
-import {
-    debounceTime,
-    distinctUntilChanged,
-    catchError,
-    map,
-} from 'rxjs/operators';
-
 export const descriptionValidator = (
     control: UntypedFormControl
 ): ValidationErrors => {

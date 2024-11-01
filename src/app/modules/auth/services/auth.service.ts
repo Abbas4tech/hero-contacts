@@ -9,6 +9,7 @@ import {
     GoogleAuthProvider,
     updateProfile,
     signInWithEmailAndPassword,
+    reload,
 } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import {
@@ -36,9 +37,13 @@ export class AuthService {
         private googleProvider: GoogleAuthProvider,
         private storage: BrowserStorageService
     ) {
-        this.auth.onAuthStateChanged((user) => {
+        this.auth.onAuthStateChanged(async (user) => {
+            console.log('Auth State ran', user);
             if (user) {
-                this.setUser(user);
+                this.user.next(user);
+                this.storage.set('userId', user.uid);
+                this.toastr.success(user.displayName);
+                await reload(user);
             }
         });
     }

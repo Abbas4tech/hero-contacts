@@ -1,9 +1,6 @@
 <ng-template #addContactTemplate>
     <ng-container *ngIf="cards.length">
-        <button
-            (click)="deleteSelected()"
-            class="btn mr-2 md:mr-4 btn-sm md:btn-md"
-        >
+        <button (click)="deleteSelected()" class="btn btn-sm md:btn-md">
             Delete {{ cards.length }} Contacts
         </button>
     </ng-container>
@@ -24,8 +21,7 @@
                     No Contacts Present!
                 </h1>
                 <a
-                    routerLink="/dashboard/contacts/details"
-                    [queryParams]="{ mode : 'add'}"
+                    routerLink="/dashboard/contacts/add-contact"
                     class="btn btn-primary mt-4 btn-sm md:btn-md"
                     >Add New Contact</a
                 >

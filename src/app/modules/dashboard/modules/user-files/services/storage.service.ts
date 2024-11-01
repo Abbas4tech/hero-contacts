@@ -42,6 +42,7 @@ export class StorageService implements OnInit {
         private _toastr: ToastService,
         private _auth: AuthService
     ) {
+        console.log(this._auth.user);
         this._auth.user.subscribe((user) => {
             this.basePath = user.email;
         });

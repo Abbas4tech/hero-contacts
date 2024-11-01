@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { UserFilesScreen } from './screens/index.screen';
 import { FileDetailsScreen } from './screens/details/details.screen';
+import { FilesResolver } from './resolvers/files.resolver';
 
 const routes: Routes = [
     {
@@ -10,9 +11,12 @@ const routes: Routes = [
         component: UserFilesScreen,
     },
     {
-        path: 'details',
+        path: ':name',
         pathMatch: 'full',
         component: FileDetailsScreen,
+        resolve: {
+            file: FilesResolver,
+        },
     },
 ];
 

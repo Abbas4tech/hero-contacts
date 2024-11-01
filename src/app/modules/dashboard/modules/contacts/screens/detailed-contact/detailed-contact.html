@@ -57,3 +57,13 @@
         </section>
     </section>
 </article>
+<div class="hero bg-base-200 my-12">
+    <div class="hero-content flex-col lg:flex-row-reverse">
+        <img [src]="contact.photoUrl" class="max-w-sm rounded-lg shadow-2xl" />
+        <div>
+            <h1 class="text-5xl font-bold">{{contact.name}}</h1>
+            <p class="py-6">{{contact.description}}</p>
+            <button class="btn btn-primary">Get Started</button>
+        </div>
+    </div>
+</div>
