@@ -1,20 +1,20 @@
 import { Contact, ContactsQueryParams } from '../model/contacts.model';
 import { Injectable } from '@angular/core';
+import { Auth } from '@angular/fire/auth';
 import { doc, Firestore, getDoc } from '@angular/fire/firestore';
 import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
-import { BrowserStorageService } from 'src/app/services/storage.service';
-import { ContactService } from '../services/contacts.service';
-import { firstValueFrom } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ContactResolver implements Resolve<Contact> {
     constructor(
         private _fire: Firestore,
-        private _browserStorage: BrowserStorageService,
-        private _contactService: ContactService
+        private auth: Auth
     ) {}
     async resolve(route: ActivatedRouteSnapshot): Promise<Contact> {
         const userId = route.queryParams['uid'];
+        this.auth.onAuthStateChanged((user) =>
+            console.log(user, 'user from contsact resolver')
+        );
         console.time('Time to extract document');
         const id = route.queryParams['id'];
 

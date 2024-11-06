@@ -3,12 +3,16 @@ import { RouterModule, Routes } from '@angular/router';
 import { UserFilesScreen } from './screens/index.screen';
 import { FileDetailsScreen } from './screens/details/details.screen';
 import { FilesResolver } from './resolvers/files.resolver';
+import { AllFilesResolver } from './resolvers/all-files.resolver';
 
 const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
         component: UserFilesScreen,
+        resolve: {
+            allFiles: AllFilesResolver,
+        },
     },
     {
         path: ':name',

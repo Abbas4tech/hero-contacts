@@ -31,7 +31,7 @@ export class FilesTable implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroy$))
             .subscribe((state) => {
                 this.files = state.files;
-                console.log(this.files);
+                console.log(state);
             });
     }
 

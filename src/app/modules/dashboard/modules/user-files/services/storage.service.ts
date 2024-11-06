@@ -42,11 +42,11 @@ export class StorageService implements OnInit {
         private _toastr: ToastService,
         private _auth: AuthService
     ) {
-        console.log(this._auth.user);
+        console.log(this._auth.user.getValue());
         this._auth.user.subscribe((user) => {
             this.basePath = user.email;
+            console.log(user);
         });
-        this.loadStorageFiles();
     }
 
     async ngOnInit(): Promise<void> {}
@@ -55,7 +55,7 @@ export class StorageService implements OnInit {
         return this.storageState.asObservable();
     }
 
-    private async loadStorageFiles(): Promise<void> {
+    async loadStorageFiles(): Promise<void> {
         try {
             const reference = ref(this.storage, this.basePath);
             const list = await listAll(reference);
@@ -68,6 +68,7 @@ export class StorageService implements OnInit {
                 0
             );
             this.storageState.next({ files, totalConsumption });
+            console.log(this.storageState);
         } catch (error) {
             console.error(error);
             this._toastr.error(`Error loading files: ${error.message}`);

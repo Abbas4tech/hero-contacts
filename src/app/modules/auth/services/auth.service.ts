@@ -9,7 +9,6 @@ import {
     GoogleAuthProvider,
     updateProfile,
     signInWithEmailAndPassword,
-    reload,
 } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import {
@@ -23,6 +22,7 @@ import {
 import { BrowserStorageService } from 'src/app/services/storage.service';
 import { ToastService } from 'src/app/services/toaster.service';
 import { errorGenerator, randomAvatarUrlGenerator } from './../utils/auth.util';
+import { loggedIn } from '@angular/fire/auth-guard';
 
 @Injectable({
     providedIn: 'root',
@@ -38,13 +38,11 @@ export class AuthService {
         private storage: BrowserStorageService
     ) {
         this.auth.onAuthStateChanged(async (user) => {
-            console.log('Auth State ran', user);
+            console.log('auth state called');
             if (user) {
-                this.user.next(user);
-                this.storage.set('userId', user.uid);
-                this.toastr.success(user.displayName);
-                await reload(user);
+                this.setUser(user);
             }
+            loggedIn(this.user).subscribe((e) => console.log(e));
         });
     }
 
