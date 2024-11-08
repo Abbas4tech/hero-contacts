@@ -6,6 +6,7 @@ import {
     OnInit,
     TemplateRef,
     AfterContentChecked,
+    AfterViewInit,
 } from '@angular/core';
 import { StorageService } from '../services/storage.service';
 import { StorageFile } from '../model/types';
@@ -17,7 +18,7 @@ import { ActivatedRoute } from '@angular/router';
     selector: 'hero-drive',
     templateUrl: './index.screen.html',
 })
-export class UserFilesScreen implements OnInit, OnDestroy, AfterContentChecked {
+export class UserFilesScreen implements OnInit, OnDestroy, AfterViewInit {
     files: StorageFile[] = [];
     private destroy$ = new Subject<void>();
     @ViewChild('fileInput') fileElement: ElementRef<HTMLInputElement>;
@@ -42,7 +43,7 @@ export class UserFilesScreen implements OnInit, OnDestroy, AfterContentChecked {
         const data = this._route.snapshot.data['allFiles'];
         console.log(data);
     }
-    ngAfterContentChecked(): void {
+    ngAfterViewInit(): void {
         setTimeout(() => {
             this._common.updateTemplate(this.uploadTemplate);
         });

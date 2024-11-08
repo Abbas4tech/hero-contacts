@@ -12,10 +12,6 @@ export class ContactResolver implements Resolve<Contact> {
     ) {}
     async resolve(route: ActivatedRouteSnapshot): Promise<Contact> {
         const userId = route.queryParams['uid'];
-        this.auth.onAuthStateChanged((user) =>
-            console.log(user, 'user from contsact resolver')
-        );
-        console.time('Time to extract document');
         const id = route.queryParams['id'];
 
         const mode = route.queryParams['mode'];

@@ -13,6 +13,7 @@ import {
     uploadBytesResumable,
     UploadTask,
     Storage,
+    getBlob,
 } from '@angular/fire/storage';
 import { StorageFile } from '../model/types';
 import { BehaviorSubject } from 'rxjs';
@@ -27,10 +28,7 @@ interface StorageState {
 })
 export class StorageService implements OnInit {
     private storage: FirebaseStorage = inject(Storage);
-    private storageState = new BehaviorSubject<StorageState>({
-        files: [],
-        totalConsumption: 0,
-    });
+    private storageState = new BehaviorSubject<StorageState>(null);
 
     private selectedFiles: FileList;
     currentUpload: Upload;
@@ -80,6 +78,7 @@ export class StorageService implements OnInit {
     ): Promise<StorageFile> {
         const metadata = await getMetadata(item);
         const url = await getDownloadURL(item);
+        const blob = await getBlob(item);
         return {
             ...metadata,
             timeCreated: new Date(metadata.timeCreated).toLocaleString(
@@ -95,6 +94,7 @@ export class StorageService implements OnInit {
                 }
             ),
             url,
+            blob,
         };
     }
 

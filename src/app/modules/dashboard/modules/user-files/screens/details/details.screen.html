@@ -1,2 +1,9 @@
-<h1>I am file Details</h1>
-<a class="btn" [download]="fileName" [href]="link">Download</a>
+<div class="grid grid-cols-4">
+    <div>
+        <h1>I am file Details</h1>
+        <a class="btn" [download]="meta.name" [href]="link">Download</a>
+    </div>
+    <div class="thumbnail col-span-2">
+        <img [src]="downloadUrl" [alt]="meta.name" />
+    </div>
+</div>
