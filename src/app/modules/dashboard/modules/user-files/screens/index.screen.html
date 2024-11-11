@@ -17,25 +17,23 @@
         </button>
     </div>
 </ng-template>
-<!-- Open the modal using ID.showModal() method -->
-<!-- <button class="btn" (click)="showModal()">open modal</button> -->
-<!-- Open the modal using ID.showModal() method -->
-<!-- <button class="btn" onclick="my_modal_5.showModal()">open modal</button> -->
-<dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
-    <div class="modal-box">
-        <h3 class="text-lg font-bold">Hello!</h3>
-        <p class="py-4">Press ESC key or click the button below to close</p>
-        <div class="modal-action">
-            <form method="dialog">
-                <!-- if there is a button in form, it will close the modal -->
-                <button class="btn">Close</button>
-            </form>
+<dialog
+    *ngIf="currentUpload"
+    #dialog
+    id="upload-modal"
+    class="modal modal-bottom sm:modal-middle"
+>
+    <div class="modal-box place-items-center">
+        <div
+            class="radial-progress"
+            style="--size: 12rem; --thickness: 0.5rem"
+            role="progressbar"
+            [ngStyle]="{'--value' : currentUpload.progress}"
+        >
+            {{currentUpload.progress}}%
         </div>
+        <h3 class="text-lg mt-4 font-bold">Uploading {{currentUpload.name}}</h3>
+        <div class="modal-action"></div>
     </div>
 </dialog>
 <files-table></files-table>
-<ng-container #dynamicModal></ng-container>
-<ng-template #modalContent>
-    <h3 class="text-lg font-bold">Chamdi!</h3>
-    <p class="py-4">Press ESC key or click the button below to close</p>
-</ng-template>

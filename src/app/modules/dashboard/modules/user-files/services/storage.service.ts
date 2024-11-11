@@ -1,5 +1,4 @@
-import { inject, Injectable, OnInit } from '@angular/core';
-import { Upload } from './upload';
+import { inject, Injectable } from '@angular/core';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { ToastService } from 'src/app/services/toaster.service';
 import {
@@ -15,7 +14,7 @@ import {
     Storage,
     getBlob,
 } from '@angular/fire/storage';
-import { StorageFile } from '../model/types';
+import { StorageFile, Upload } from '../model/types';
 import { BehaviorSubject } from 'rxjs';
 
 interface StorageState {
@@ -26,15 +25,15 @@ interface StorageState {
 @Injectable({
     providedIn: 'root',
 })
-export class StorageService implements OnInit {
+export class StorageService {
     private storage: FirebaseStorage = inject(Storage);
     private storageState = new BehaviorSubject<StorageState>(null);
 
     private selectedFiles: FileList;
-    currentUpload: Upload;
-
     basePath: string;
     readonly maxBucketSizeInBytes = 104857600; // 100MB
+
+    currentUpload: BehaviorSubject<Upload> = new BehaviorSubject<Upload>(null);
 
     constructor(
         private _toastr: ToastService,
@@ -46,8 +45,6 @@ export class StorageService implements OnInit {
             console.log(user);
         });
     }
-
-    async ngOnInit(): Promise<void> {}
 
     get storageState$() {
         return this.storageState.asObservable();
@@ -134,41 +131,51 @@ export class StorageService implements OnInit {
                 );
                 return;
             }
-            this.currentUpload = new Upload(file);
-            this.pushUpload(this.currentUpload);
+            this.pushUpload(file);
         } else {
             this._toastr.warning('No file selected for upload.');
         }
     }
 
-    private pushUpload(upload: Upload): void {
-        const fileRef = ref(
-            this.storage,
-            `${this.basePath}/${upload.file.name}`
-        );
-        const uploadTask = uploadBytesResumable(fileRef, upload.file);
-
-        this.handleUploadState(uploadTask, upload);
+    private pushUpload(upload: File): void {
+        const fileRef = ref(this.storage, `${this.basePath}/${upload.name}`);
+        const uploadTask = uploadBytesResumable(fileRef, upload);
+        this.currentUpload.next({
+            ...this.currentUpload.getValue(),
+            $key: upload.name,
+            createdAt: new Date(),
+            file: upload,
+            name: upload.name,
+            url: fileRef.fullPath,
+        });
+        this.handleUploadState(uploadTask);
     }
 
-    private handleUploadState(uploadTask: UploadTask, upload: Upload) {
+    private handleUploadState(uploadTask: UploadTask) {
         uploadTask.on(
             'state_changed',
             (snapshot) => {
-                upload.progress =
-                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                this.currentUpload.next({
+                    ...this.currentUpload.getValue(),
+                    progress: Math.round(
+                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                    ),
+                });
             },
             (error) => {
                 console.error('Upload failed:', error);
                 this._toastr.error(error.message);
             },
             async () => {
-                upload.url = await getDownloadURL(uploadTask.snapshot.ref);
-                upload.name = upload.file.name;
+                this.currentUpload.next({
+                    ...this.currentUpload.getValue(),
+                    url: await getDownloadURL(uploadTask.snapshot.ref),
+                });
                 this._toastr.success(
-                    `Successfully uploaded ${upload.file.name}!`
+                    `Successfully uploaded ${this.currentUpload.getValue().name}!`
                 );
                 await this.loadStorageFiles();
+                this.currentUpload.next(null);
             }
         );
     }
