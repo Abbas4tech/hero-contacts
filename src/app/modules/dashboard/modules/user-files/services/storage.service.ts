@@ -171,10 +171,10 @@ export class StorageService {
                     ...this.currentUpload.getValue(),
                     url: await getDownloadURL(uploadTask.snapshot.ref),
                 });
+                await this.loadStorageFiles();
                 this._toastr.success(
                     `Successfully uploaded ${this.currentUpload.getValue().name}!`
                 );
-                await this.loadStorageFiles();
                 this.currentUpload.next(null);
             }
         );
@@ -184,7 +184,7 @@ export class StorageService {
         const storageRef = ref(this.storage, path);
         try {
             await deleteObject(storageRef);
-            this._toastr.success(`Deleted Successfully!`);
+            this._toastr.success(`Deleted ${storageRef.name} Successfully!`);
         } catch (error) {
             console.error(error);
             this._toastr.error(`Failed to delete ${storageRef.name}`);

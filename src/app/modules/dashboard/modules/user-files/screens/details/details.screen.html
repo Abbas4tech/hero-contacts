@@ -1,9 +1,36 @@
-<div class="grid grid-cols-4">
-    <div>
-        <h1>I am file Details</h1>
-        <a class="btn" [download]="meta.name" [href]="link">Download</a>
-    </div>
-    <div class="thumbnail col-span-2">
-        <img [src]="downloadUrl" [alt]="meta.name" />
+<div class="hero bg-base-200 my-12">
+    <div class="hero-content flex-col lg:flex-row-reverse">
+        <div class="thumbnail max-h-80 aspect-square flex gap-4 flex-col">
+            <img
+                [src]="downloadUrl"
+                [alt]="meta.name"
+                class="object-cover h-full rounded-md shadow-md"
+            />
+        </div>
+        <div class="flex flex-col gap-4">
+            <div><span class="font-semibold">Name:</span> {{meta.name}}</div>
+            <div>
+                <span class="font-semibold">Type:</span> {{meta.contentType}}
+            </div>
+            <div><span class="font-semibold">Size:</span> {{meta.size}}</div>
+            <div>
+                <span class="font-semibold">Created At:</span>
+                {{meta.timeCreated}}
+            </div>
+            <div>
+                <span class="font-semibold">Updated At:</span> {{meta.updated}}
+            </div>
+            <div>
+                <span class="font-semibold truncate">Fullpath:</span>
+                {{meta.fullPath}}
+            </div>
+        </div>
     </div>
 </div>
+
+<ng-template #detailsTemplate>
+    <a class="btn btn-success" [download]="meta.name" [href]="link">Download</a>
+    <button (click)="delete(meta.fullPath)" class="btn btn-error">
+        Delete
+    </button>
+</ng-template>

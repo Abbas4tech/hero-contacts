@@ -42,6 +42,7 @@ export class UserFilesScreen implements OnInit, OnDestroy, AfterViewInit {
     }
 
     ngOnInit(): void {
+        this._common.setTitle('Files');
         const data = this._route.snapshot.data['allFiles'];
         console.log(data);
         this._uploadService.currentUpload

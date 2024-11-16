@@ -3,6 +3,7 @@ import { StorageService } from '../../services/storage.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { StorageFile } from '../../model/types';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BrowserStorageService } from 'src/app/services/storage.service';
 
 @Component({
     selector: 'files-table',
@@ -11,12 +12,21 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class FilesTable implements OnInit, OnDestroy {
     files: StorageFile[] = [];
     subs: Subscription;
+    showConsent = true;
     private destroy$ = new Subject<void>();
     constructor(
         private _uploadService: StorageService,
         private _router: Router,
-        private route: ActivatedRoute
-    ) {}
+        private route: ActivatedRoute,
+        private _browserStorage: BrowserStorageService
+    ) {
+        this.showConsent = !Boolean(this._browserStorage.get('filesConsent'));
+    }
+
+    closeConsent(): void {
+        this.showConsent = false;
+        this._browserStorage.set('filesConsent', 'true');
+    }
 
     showDetails(name: string) {
         this._router.navigate([name], { relativeTo: this.route });
