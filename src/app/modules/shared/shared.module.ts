@@ -5,6 +5,7 @@ import { NewtworkManagerDirective } from './directives/network-manager.directive
 import { CapitalizePipe } from './pipes/capitalize.pipe';
 import { Breadcrumb } from './components/breadcrumb/breadcrumb.component';
 import { PageWrapper } from './components/page-wrapper/page-wrapper.component';
+import { MemoryConverterPipe } from './pipes/memory-coverter.pipe';
 
 @NgModule({
     declarations: [
@@ -13,6 +14,7 @@ import { PageWrapper } from './components/page-wrapper/page-wrapper.component';
         CapitalizePipe,
         Breadcrumb,
         PageWrapper,
+        MemoryConverterPipe,
     ],
     imports: [CommonModule],
     exports: [
@@ -21,6 +23,7 @@ import { PageWrapper } from './components/page-wrapper/page-wrapper.component';
         Breadcrumb,
         CapitalizePipe,
         PageWrapper,
+        MemoryConverterPipe,
     ],
     providers: [],
 })

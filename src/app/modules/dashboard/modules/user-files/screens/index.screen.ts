@@ -5,26 +5,32 @@ import {
     ElementRef,
     OnInit,
     TemplateRef,
+    AfterViewInit,
+    ChangeDetectorRef,
 } from '@angular/core';
 import { StorageService } from '../services/storage.service';
-import { StorageFile } from '../model/types';
-import { Subject } from 'rxjs';
+import { StorageFile, Upload } from '../model/types';
+import { Subject, takeUntil } from 'rxjs';
 import { CommonService } from 'src/app/services/common.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'hero-drive',
     templateUrl: './index.screen.html',
 })
-export class UserFilesScreen implements OnInit, OnDestroy {
+export class UserFilesScreen implements OnInit, OnDestroy, AfterViewInit {
     files: StorageFile[] = [];
     private destroy$ = new Subject<void>();
     @ViewChild('fileInput') fileElement: ElementRef<HTMLInputElement>;
+    @ViewChild('dialog') dialog: ElementRef<HTMLDialogElement>;
     @ViewChild('uploadTemplate')
     uploadTemplate: TemplateRef<HTMLElement[]>;
-
+    currentUpload: Upload;
     constructor(
         private _uploadService: StorageService,
-        private _common: CommonService
+        private _common: CommonService,
+        private _route: ActivatedRoute,
+        private _changeRef: ChangeDetectorRef
     ) {}
 
     detectFiles(event: Event): void {
@@ -36,6 +42,18 @@ export class UserFilesScreen implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        this._common.setTitle('Files');
+        const data = this._route.snapshot.data['allFiles'];
+        console.log(data);
+        this._uploadService.currentUpload
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((val) => {
+                this.currentUpload = val;
+                if (val) this.dialog.nativeElement.showModal();
+                this._changeRef.detectChanges();
+            });
+    }
+    ngAfterViewInit(): void {
         setTimeout(() => {
             this._common.updateTemplate(this.uploadTemplate);
         });

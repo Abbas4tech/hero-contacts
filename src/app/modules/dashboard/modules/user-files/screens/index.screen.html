@@ -17,4 +17,23 @@
         </button>
     </div>
 </ng-template>
+<dialog
+    *ngIf="currentUpload"
+    #dialog
+    id="upload-modal"
+    class="modal modal-bottom sm:modal-middle"
+>
+    <div class="modal-box place-items-center">
+        <div
+            class="radial-progress"
+            style="--size: 12rem; --thickness: 0.5rem"
+            role="progressbar"
+            [ngStyle]="{'--value' : currentUpload.progress}"
+        >
+            {{currentUpload.progress}}%
+        </div>
+        <h3 class="text-lg mt-4 font-bold">Uploading {{currentUpload.name}}</h3>
+        <div class="modal-action"></div>
+    </div>
+</dialog>
 <files-table></files-table>

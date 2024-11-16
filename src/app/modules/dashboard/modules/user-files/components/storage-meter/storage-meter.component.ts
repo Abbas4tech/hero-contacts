@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { StorageFile } from '../../model/types';
 import { StorageService } from '../../services/storage.service';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -32,10 +31,11 @@ import { takeUntil } from 'rxjs/operators';
     `,
 })
 export class StorageMeter implements OnInit, OnDestroy {
-    files: StorageFile[] = [];
     currentConsumption = 0;
-    currentConsumptionInFormat = '';
-    maxBucketConsumptionInFormat = '';
+    currentConsumptionInFormat = this._storageService.formatBytes(
+        this.currentConsumption
+    );
+    maxBucketConsumptionInFormat = this._storageService.maxBucketSizeInFormat;
     percentageConsumption = 0;
     subs: Subscription;
 
@@ -44,13 +44,9 @@ export class StorageMeter implements OnInit, OnDestroy {
     constructor(private _storageService: StorageService) {}
 
     ngOnInit(): void {
-        this.maxBucketConsumptionInFormat =
-            this._storageService.maxBucketSizeInFormat;
-
-        this.subs = this._storageService.storageState$
+        this._storageService.storageState$
             .pipe(takeUntil(this.destroy$))
             .subscribe((state) => {
-                this.files = state.files;
                 if (state.totalConsumption !== this.currentConsumption) {
                     this.currentConsumption = state.totalConsumption;
                     this.currentConsumptionInFormat =
@@ -72,6 +68,6 @@ export class StorageMeter implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
-        this.subs.unsubscribe();
+        if (this.subs) this.subs.unsubscribe();
     }
 }

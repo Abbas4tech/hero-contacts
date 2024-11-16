@@ -1,9 +1,16 @@
-import { Directive, ElementRef, Input, Renderer2 } from '@angular/core';
+import {
+    Directive,
+    ElementRef,
+    Input,
+    OnChanges,
+    Renderer2,
+    SimpleChanges,
+} from '@angular/core';
 
 @Directive({
     selector: '[data-tip]',
 })
-export class TooltipDirective {
+export class TooltipDirective implements OnChanges {
     @Input('data-tip') tooltipText: string;
 
     constructor(
@@ -11,13 +18,11 @@ export class TooltipDirective {
         private renderer: Renderer2
     ) {}
 
-    ngOnInit() {
-        if (this.tooltipText) {
-            this.renderer.setAttribute(
-                this.el.nativeElement,
-                'data-tip',
-                this.tooltipText
-            );
-        }
+    ngOnChanges(changes: SimpleChanges): void {
+        this.renderer.setAttribute(
+            this.el.nativeElement,
+            'data-tip',
+            changes['tooltipText'].currentValue
+        );
     }
 }

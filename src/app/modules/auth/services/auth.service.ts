@@ -36,7 +36,7 @@ export class AuthService {
         private googleProvider: GoogleAuthProvider,
         private storage: BrowserStorageService
     ) {
-        this.auth.onAuthStateChanged((user) => {
+        this.auth.onAuthStateChanged(async (user) => {
             if (user) {
                 this.setUser(user);
             }
