@@ -22,7 +22,6 @@ import {
 import { BrowserStorageService } from 'src/app/services/storage.service';
 import { ToastService } from 'src/app/services/toaster.service';
 import { errorGenerator, randomAvatarUrlGenerator } from './../utils/auth.util';
-import { loggedIn } from '@angular/fire/auth-guard';
 
 @Injectable({
     providedIn: 'root',
@@ -38,11 +37,9 @@ export class AuthService {
         private storage: BrowserStorageService
     ) {
         this.auth.onAuthStateChanged(async (user) => {
-            console.log('auth state called');
             if (user) {
                 this.setUser(user);
             }
-            loggedIn(this.user).subscribe((e) => console.log(e));
         });
     }
 

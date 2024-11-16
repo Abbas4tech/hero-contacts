@@ -6,16 +6,9 @@ import { StorageMeter } from './components/storage-meter/storage-meter.component
 import { TooltipDirective } from './directives/tooltip.directive';
 import { SharedModule } from 'src/app/modules/shared/shared.module';
 import { FilesTable } from './components/table/table.component';
-import { Modal } from './components/modal/modal.component';
 
 @NgModule({
-    declarations: [
-        UserFilesScreen,
-        StorageMeter,
-        TooltipDirective,
-        FilesTable,
-        Modal,
-    ],
+    declarations: [UserFilesScreen, StorageMeter, TooltipDirective, FilesTable],
     imports: [CommonModule, UserFilesRoutingModule, SharedModule],
     exports: [TooltipDirective],
 })

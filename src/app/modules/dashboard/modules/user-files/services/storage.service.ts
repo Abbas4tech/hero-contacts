@@ -39,10 +39,8 @@ export class StorageService {
         private _toastr: ToastService,
         private _auth: AuthService
     ) {
-        console.log(this._auth.user.getValue());
         this._auth.user.subscribe((user) => {
             this.basePath = user.email;
-            console.log(user);
         });
     }
 
@@ -63,7 +61,6 @@ export class StorageService {
                 0
             );
             this.storageState.next({ files, totalConsumption });
-            console.log(this.storageState);
         } catch (error) {
             console.error(error);
             this._toastr.error(`Error loading files: ${error.message}`);
