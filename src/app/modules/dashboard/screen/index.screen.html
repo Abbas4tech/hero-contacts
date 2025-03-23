@@ -5,7 +5,7 @@
         <div class="navbar-start">
             <label
                 tabindex="{0}"
-                class="btn btn-ghost btn-circle drawer-button lg:hidden"
+                class="btn btn-sm md:btn-md btn-ghost btn-circle drawer-button lg:hidden"
                 for="my-drawer-2"
             >
                 <svg
@@ -38,9 +38,7 @@
             <h1
                 class="text-lg normal-case lg:text-2xl btn btn-md btn-ghost p-2"
             >
-                <a href="/" class="cursor-pointer text-base-content"
-                    >Welcome {{ loggedInUser.displayName }} !!</a
-                >
+                Welcome {{ loggedInUser.displayName }} !!
             </h1>
         </div>
 
@@ -110,11 +108,10 @@
                 >
                     <a
                         (click)="closeSidebar()"
-                        routerLink="/dashboard/profile"
-                        [routerLinkActiveOptions]="{ exact: true }"
+                        routerLink="/dashboard/files"
                         class="px-4 py-2 text-lg md:py-3 w-full !rounded-none flex gap-2 items-center bg-base-200 transform duration-200 ease-out"
                         routerLinkActive="border-primary border-l-4 bg-base-200 font-bold"
-                        >Profile</a
+                        >Files</a
                     >
                 </li>
 
@@ -123,10 +120,11 @@
                 >
                     <a
                         (click)="closeSidebar()"
-                        routerLink="/dashboard/files"
+                        routerLink="/dashboard/profile"
+                        [routerLinkActiveOptions]="{ exact: true }"
                         class="px-4 py-2 text-lg md:py-3 w-full !rounded-none flex gap-2 items-center bg-base-200 transform duration-200 ease-out"
                         routerLinkActive="border-primary border-l-4 bg-base-200 font-bold"
-                        >Files</a
+                        >Profile</a
                     >
                 </li>
             </ul>

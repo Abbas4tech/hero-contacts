@@ -1,31 +1,42 @@
-<section class="w-full flex flex-col items-center">
-    <div class="tooltip m-2 tooltip-bottom" data-tip="Choose Profile Photo!">
-        <div class="avatar">
-            <div
-                class="w-36 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2"
-            >
-                <img
-                    [src]="user.photoURL"
-                    class=""
-                    alt="user-img"
-                    loading="lazy"
-                    (click)="selectFile()"
-                />
-                <input
-                    type="file"
-                    #fileInput
-                    networkDisabled
-                    (change)="uploadprofile($event)"
-                    accept="image/jpg"
-                    class="hidden"
-                />
+<section class="w-full max-w-xl px-2 flex flex-col items-center mx-auto">
+    <div class="self-start">
+        <label
+            for="profile-picture"
+            class="label font-semibold text-sm md:text-lg"
+            >Profile Picture:</label
+        >
+        <div
+            class="tooltip m-2 tooltip-bottom"
+            data-tip="Choose Profile Photo!"
+        >
+            <div class="avatar">
+                <div
+                    class="w-36 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2"
+                >
+                    <img
+                        [src]="user.photoURL"
+                        class=""
+                        alt="user-img"
+                        loading="lazy"
+                        (click)="selectFile()"
+                    />
+                    <input
+                        type="file"
+                        #fileInput
+                        networkDisabled
+                        (change)="uploadprofile($event)"
+                        accept="image/jpg"
+                        class="hidden"
+                    />
+                </div>
             </div>
         </div>
     </div>
-    <section class="mb-4 mt-8 p-0 bg-base-300"></section>
+
     <form
         action="user-update"
         [formGroup]="updateForm"
+        class="w-full"
         (ngSubmit)="submitForm()"
     >
         <section class="form-control">
@@ -52,11 +63,11 @@
         <section class="flex mt-4 justify-end">
             <button
                 networkDisabled
-                [ngClass]="{'loading': isLoading}"
-                [disabled]="!updateForm.valid"
+                [disabled]="!updateForm.valid || isLoading"
                 type="submit"
                 class="btn-sm btn md:btn-md"
             >
+                <span *ngIf="isLoading" class="loading loading-spinner"></span>
                 Submit
             </button>
         </section>

@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { StorageService } from '../../services/storage.service';
-import { Subject, Subscription } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 
 @Component({
     selector: 'storage-meter',

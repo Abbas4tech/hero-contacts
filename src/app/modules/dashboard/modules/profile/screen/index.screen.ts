@@ -1,38 +1,53 @@
-import { Component, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { AuthService } from 'src/app/modules/auth/services/auth.service';
-import { updateProfile, User } from '@angular/fire/auth';
 import {
-    AngularFireStorage,
-    AngularFireUploadTask,
-} from '@angular/fire/compat/storage';
-import { ToastService } from 'src/app/services/toaster.service';
+    Component,
+    OnDestroy,
+    ViewChild,
+    ElementRef,
+    inject,
+} from '@angular/core';
+import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
+
+import {
+    updateProfile,
+    User,
+    deleteUser,
+    reauthenticateWithCredential,
+} from '@angular/fire/auth';
+import {
+    FirebaseStorage,
+    getDownloadURL,
+    ref,
+    uploadBytesResumable,
+    Storage,
+} from '@angular/fire/storage';
 import {
     AbstractControl,
     UntypedFormBuilder,
     UntypedFormControl,
     UntypedFormGroup,
 } from '@angular/forms';
-import { Location } from '@angular/common';
+
 import { noSpace } from '../../contacts/validators/validators';
 import { CommonService } from 'src/app/services/common.service';
+import { AuthService } from 'src/app/modules/auth/services/auth.service';
+import { ToastService } from 'src/app/services/toaster.service';
+
 @Component({
     selector: 'profile',
     templateUrl: './index.screen.html',
 })
 export class IndexProfileScreen implements OnDestroy {
-    task: AngularFireUploadTask;
     suscriptions: Subscription[] = [];
     @ViewChild('fileInput') fileInput: ElementRef<HTMLInputElement>;
     percentage: number;
     user: User;
-
+    private storage: FirebaseStorage = inject(Storage);
     updateForm: UntypedFormGroup;
     isLoading: boolean;
 
     constructor(
         private _auth: AuthService,
-        private _fireStorage: AngularFireStorage,
         private _toastr: ToastService,
         private _fb: UntypedFormBuilder,
         private _location: Location,
@@ -57,21 +72,30 @@ export class IndexProfileScreen implements OnDestroy {
             const file: Blob = target.files[0];
             if (file.type.includes('image/')) {
                 const filepath = `${this.user.uid}.png`;
-                const fileRef = this._fireStorage.ref(filepath);
-                this.task = this._fireStorage.upload(filepath, file, {
-                    cacheControl: 'true',
-                });
-                this.suscriptions.push(
-                    this.task
-                        .percentageChanges()
-                        .subscribe((count) => (this.percentage = count))
+                const refs = ref(this.storage, filepath);
+                const uploadTask = uploadBytesResumable(refs, file);
+                uploadTask.on(
+                    'state_changed',
+                    (snapshot) => {
+                        this.percentage = Math.round(
+                            (snapshot.bytesTransferred / snapshot.totalBytes) *
+                                100
+                        );
+                    },
+                    (error) => {
+                        console.error('Upload failed:', error);
+                        this._toastr.error(error.message);
+                    },
+                    async () => {
+                        const url = await getDownloadURL(
+                            uploadTask.snapshot.ref
+                        );
+                        await updateProfile(this._auth.user.value, {
+                            photoURL: url,
+                        });
+                        this._toastr.success('Profile Updated Successfully!');
+                    }
                 );
-
-                const url = (await fileRef
-                    .getDownloadURL()
-                    .toPromise()) as string;
-                await updateProfile(this._auth.user.value, { photoURL: url });
-                this._toastr.success('Profile Updated Successfully!');
             } else {
                 throw new Error('Please select proper image file');
             }
@@ -79,6 +103,11 @@ export class IndexProfileScreen implements OnDestroy {
             console.error(err);
             this._toastr.error(err);
         }
+    }
+
+    async deleteUser() {
+        await deleteUser(this.user);
+        this._location.back();
     }
 
     async submitForm(): Promise<void> {
