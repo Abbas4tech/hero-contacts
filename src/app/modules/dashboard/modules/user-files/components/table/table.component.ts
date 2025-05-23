@@ -8,6 +8,7 @@ import { BrowserStorageService } from 'src/app/services/storage.service';
 @Component({
     selector: 'files-table',
     templateUrl: './table.component.html',
+    standalone: false
 })
 export class FilesTable implements OnInit, OnDestroy {
     files: StorageFile[] = [];

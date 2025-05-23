@@ -34,55 +34,51 @@
     </div>
 </div>
 
-<div>
-    <table class="table">
-        <!-- head -->
-        <thead>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Size</th>
+            <th>Uploaded At:</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <ng-container *ngFor="let item of files">
             <tr>
-                <th>Name</th>
-                <th>Size</th>
-                <th>Uploaded At:</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <ng-container *ngFor="let item of files">
-                <!-- row 1 -->
-                <tr>
-                    <td class="cursor-pointer" (click)="showDetails(item.name)">
-                        <div class="flex items-center gap-3">
-                            <div class="avatar">
-                                <div class="mask mask-squircle h-12 w-12">
-                                    <img
-                                        [src]="item.url"
-                                        [alt]="item.name"
-                                        loading="lazy"
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <div class="font-bold">{{ item.name }}</div>
+                <td class="cursor-pointer" (click)="showDetails(item.name)">
+                    <div class="flex items-center gap-3">
+                        <div class="avatar">
+                            <div class="mask mask-squircle h-12 w-12">
+                                <img
+                                    [src]="item.url"
+                                    [alt]="item.name"
+                                    loading="lazy"
+                                />
                             </div>
                         </div>
-                    </td>
-                    <td>
-                        {{ item.size | memoryConverter }}
-                        <br />
-                        <span class="badge badge-ghost badge-sm">{{
-                            item.contentType
-                        }}</span>
-                    </td>
-                    <td>{{ item.timeCreated | date }}</td>
-                    <th>
-                        <button
-                            (click)="deleteFile($event, item.fullPath)"
-                            class="btn btn-ghost btn-xs"
-                        >
-                            Delete
-                        </button>
-                    </th>
-                </tr>
-            </ng-container>
-        </tbody>
-    </table>
-</div>
+                        <div>
+                            <div class="font-bold">{{ item.name }}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    {{ item.size | memoryConverter }}
+                    <br />
+                    <span class="badge badge-ghost badge-sm">{{
+                        item.contentType
+                    }}</span>
+                </td>
+                <td>{{ item.timeCreated | date }}</td>
+                <th>
+                    <button
+                        (click)="deleteFile($event, item.fullPath)"
+                        class="btn btn-ghost btn-xs"
+                    >
+                        Delete
+                    </button>
+                </th>
+            </tr>
+        </ng-container>
+    </tbody>
+</table>

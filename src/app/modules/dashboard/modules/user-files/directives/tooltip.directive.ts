@@ -9,6 +9,7 @@ import {
 
 @Directive({
     selector: '[data-tip]',
+    standalone: false
 })
 export class TooltipDirective implements OnChanges {
     @Input('data-tip') tooltipText: string;

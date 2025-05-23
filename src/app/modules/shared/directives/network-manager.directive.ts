@@ -1,6 +1,9 @@
 import { Directive, ElementRef, HostListener } from '@angular/core';
 
-@Directive({ selector: '[networkDisabled]' })
+@Directive({
+    selector: '[networkDisabled]',
+    standalone: false
+})
 export class NewtworkManagerDirective {
     constructor(private _elRef: ElementRef<HTMLElement>) {}
 

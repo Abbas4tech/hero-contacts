@@ -17,6 +17,7 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
     selector: 'hero-drive',
     templateUrl: './index.screen.html',
+    standalone: false
 })
 export class UserFilesScreen implements OnInit, OnDestroy, AfterViewInit {
     files: StorageFile[] = [];

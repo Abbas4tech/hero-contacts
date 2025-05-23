@@ -21,6 +21,7 @@ import { FirebaseError } from '@angular/fire/app';
     selector: 'index',
     templateUrl: './index.component.html',
     providers: [AuthService],
+    standalone: false
 })
 export class IndexComponent implements OnInit, OnDestroy {
     isSignUp = true;

@@ -5,6 +5,7 @@ import { CommonService } from 'src/app/services/common.service';
 @Component({
     selector: 'page-wrapper',
     templateUrl: './page-wrapper.component.html',
+    standalone: false
 })
 export class PageWrapper implements OnInit, OnDestroy {
     dynamicTemplate: TemplateRef<HTMLElement[]>;

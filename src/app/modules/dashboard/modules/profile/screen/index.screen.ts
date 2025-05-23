@@ -18,9 +18,9 @@ import {
 } from '@angular/fire/storage';
 import {
     AbstractControl,
-    UntypedFormBuilder,
-    UntypedFormControl,
-    UntypedFormGroup,
+    FormControl,
+    FormGroup,
+    FormBuilder,
 } from '@angular/forms';
 
 import { noSpace } from '../../contacts/validators/validators';
@@ -32,6 +32,7 @@ import { StorageService } from '../../user-files/services/storage.service';
 @Component({
     selector: 'profile',
     templateUrl: './index.screen.html',
+    standalone: false,
 })
 export class IndexProfileScreen implements OnDestroy {
     suscriptions: Subscription[] = [];
@@ -39,13 +40,13 @@ export class IndexProfileScreen implements OnDestroy {
     percentage: number;
     user: User;
     private storage: FirebaseStorage = inject(Storage);
-    updateForm: UntypedFormGroup;
+    updateForm: FormGroup<{ username: FormControl<string> }>;
     isLoading: boolean;
 
     constructor(
         private _auth: AuthService,
         private _toastr: ToastService,
-        private _fb: UntypedFormBuilder,
+        private _fb: FormBuilder,
         private _location: Location,
         private _common: CommonService,
         private _storage: StorageService
@@ -57,7 +58,7 @@ export class IndexProfileScreen implements OnDestroy {
             })
         );
         this.updateForm = this._fb.group({
-            username: new UntypedFormControl(this.user.displayName, [noSpace]),
+            username: new FormControl(this.user.displayName, [noSpace]),
         });
     }
     selectFile(): void {

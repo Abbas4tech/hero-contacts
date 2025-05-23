@@ -18,12 +18,15 @@
             "prefix": "",
             "architect": {
                 "build": {
-                    "builder": "@angular-devkit/build-angular:browser",
+                    "builder": "@angular-devkit/build-angular:application",
                     "options": {
-                        "outputPath": "dist/m-contacts",
+                        "outputPath": {
+                          "base": "dist/m-contacts"
+                        },
                         "index": "src/index.html",
-                        "main": "src/main.ts",
-                        "polyfills": "src/polyfills.ts",
+                        "polyfills": [
+                          "src/polyfills.ts"
+                        ],
                         "tsConfig": "tsconfig.app.json",
                         "inlineStyleLanguage": "scss",
                         "assets": [
@@ -35,11 +38,10 @@
                             "src/styles.scss",
                             "./node_modules/ngx-toastr/toastr.css"
                         ],
-                        "buildOptimizer": true,
                         "optimization": true,
                         "scripts": [],
-                        "serviceWorker": true,
-                        "ngswConfigPath": "ngsw-config.json"
+                        "serviceWorker": "ngsw-config.json",
+                        "browser": "src/main.ts"
                     },
                     "configurations": {
                         "production": {
@@ -61,20 +63,15 @@
                                 }
                             ],
                             "outputHashing": "all",
-                            "buildOptimizer": true,
                             "optimization": true,
-                            "serviceWorker": true,
-                            "ngswConfigPath": "ngsw-config.json"
+                            "serviceWorker": "ngsw-config.json"
                         },
                         "development": {
-                            "buildOptimizer": true,
-                            "optimization": true,
-                            "vendorChunk": true,
+                          "optimization": true,
                             "extractLicenses": false,
                             "sourceMap": true,
                             "namedChunks": true,
-                            "serviceWorker": true,
-                            "ngswConfigPath": "ngsw-config.json"
+                            "serviceWorker": "ngsw-config.json"
                         }
                     },
                     "defaultConfiguration": "development"

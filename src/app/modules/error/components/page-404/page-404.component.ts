@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 @Component({
     selector: 'page-not-found',
     templateUrl: './page-404.component.html',
+    standalone: false
 })
 export class PageNotFoundComponent {
     constructor(

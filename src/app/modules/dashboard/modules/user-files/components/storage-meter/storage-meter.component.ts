@@ -28,6 +28,7 @@ import { Subject, Subscription, takeUntil } from 'rxjs';
             ></progress>
         </div>
     `,
+    standalone: false
 })
 export class StorageMeter implements OnInit, OnDestroy {
     currentConsumption = 0;

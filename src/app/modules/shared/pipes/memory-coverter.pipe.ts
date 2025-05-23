@@ -2,6 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
     name: 'memoryConverter',
+    standalone: false
 })
 export class MemoryConverterPipe implements PipeTransform {
     transform(value: number): string {

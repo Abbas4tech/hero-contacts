@@ -16,6 +16,7 @@ import { Location } from '@angular/common';
 @Component({
     selector: 'file-details',
     templateUrl: './details.screen.html',
+    standalone: false
 })
 export class FileDetailsScreen implements OnInit, OnDestroy, AfterViewInit {
     link: string;
