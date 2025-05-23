@@ -32,7 +32,8 @@ export class FilesTable implements OnInit, OnDestroy {
         this._router.navigate([name], { relativeTo: this.route });
     }
 
-    async deleteFile(path: string) {
+    async deleteFile(e: MouseEvent, path: string) {
+        e.stopPropagation();
         await this._uploadService.deleteFile(path);
     }
 

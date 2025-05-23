@@ -34,93 +34,55 @@
     </div>
 </div>
 
-<div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-4">
-    <ng-container *ngFor="let item of files">
-        <div
-            class="bg-base-200 min-h-48 flex flex-col justify-between rounded-sm cursor-pointer"
-        >
-            <img
-                (click)="showDetails(item.name)"
-                [src]="item.url"
-                class="max-h-40 p-4 w-full rounded-sm object-cover"
-                [alt]="item.name"
-            />
-            <div class="flex items-center bg-base-300 justify-between gap-4">
-                <div class="text-sm p-2 truncate md:text-base font-semibold">
-                    {{ item.name }}
-                </div>
-                <div
-                    class="dropdown menu-dropdown-show dropdown-bottom dropdown-end"
-                >
-                    <div
-                        tabindex="0"
-                        role="button"
-                        class="my-1 mx-2 cursor-pointer"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="1em"
-                            height="1em"
-                            viewBox="0 0 24 24"
-                            class="fill-current"
-                        >
-                            <g clip-path="url(#clip0_105_1875)">
-                                <rect
-                                    height="0.01"
-                                    stroke="#292929"
-                                    stroke-linejoin="round"
-                                    stroke-width="3"
-                                    width="0.01"
-                                    x="12"
-                                    y="12"
-                                />
-
-                                <rect
-                                    height="0.01"
-                                    stroke="#292929"
-                                    stroke-linejoin="round"
-                                    stroke-width="3"
-                                    width="0.01"
-                                    x="12"
-                                    y="5"
-                                />
-
-                                <rect
-                                    height="0.01"
-                                    stroke="#292929"
-                                    stroke-linejoin="round"
-                                    stroke-width="3"
-                                    width="0.01"
-                                    x="12"
-                                    y="19"
-                                />
-                            </g>
-
-                            <defs>
-                                <clipPath id="clip0_105_1875">
-                                    <rect
-                                        fill="white"
-                                        height="24"
-                                        transform="translate(0 0.000976562)"
-                                        width="24"
+<div>
+    <table class="table">
+        <!-- head -->
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Size</th>
+                <th>Uploaded At:</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let item of files">
+                <!-- row 1 -->
+                <tr>
+                    <td class="cursor-pointer" (click)="showDetails(item.name)">
+                        <div class="flex items-center gap-3">
+                            <div class="avatar">
+                                <div class="mask mask-squircle h-12 w-12">
+                                    <img
+                                        [src]="item.url"
+                                        [alt]="item.name"
+                                        loading="lazy"
                                     />
-                                </clipPath>
-                            </defs>
-                        </svg>
-                    </div>
-                    <ul
-                        tabindex="0"
-                        class="dropdown-content menu bg-base-200 rounded-box z-10 w-52 p-2 shadow-lg"
-                    >
-                        <li
-                            (click)="deleteFile(item.fullPath)"
-                            class="text-error font-semibold"
+                                </div>
+                            </div>
+                            <div>
+                                <div class="font-bold">{{ item.name }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {{ item.size | memoryConverter }}
+                        <br />
+                        <span class="badge badge-ghost badge-sm">{{
+                            item.contentType
+                        }}</span>
+                    </td>
+                    <td>{{ item.timeCreated | date }}</td>
+                    <th>
+                        <button
+                            (click)="deleteFile($event, item.fullPath)"
+                            class="btn btn-ghost btn-xs"
                         >
-                            <a>Delete</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </ng-container>
+                            Delete
+                        </button>
+                    </th>
+                </tr>
+            </ng-container>
+        </tbody>
+    </table>
 </div>

@@ -8,12 +8,7 @@ import {
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 
-import {
-    updateProfile,
-    User,
-    deleteUser,
-    reauthenticateWithCredential,
-} from '@angular/fire/auth';
+import { updateProfile, User, deleteUser } from '@angular/fire/auth';
 import {
     FirebaseStorage,
     getDownloadURL,
@@ -32,6 +27,7 @@ import { noSpace } from '../../contacts/validators/validators';
 import { CommonService } from 'src/app/services/common.service';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { ToastService } from 'src/app/services/toaster.service';
+import { StorageService } from '../../user-files/services/storage.service';
 
 @Component({
     selector: 'profile',
@@ -51,7 +47,8 @@ export class IndexProfileScreen implements OnDestroy {
         private _toastr: ToastService,
         private _fb: UntypedFormBuilder,
         private _location: Location,
-        private _common: CommonService
+        private _common: CommonService,
+        private _storage: StorageService
     ) {
         this._common.setTitle('Profile');
         this.suscriptions.push(
@@ -70,6 +67,7 @@ export class IndexProfileScreen implements OnDestroy {
         try {
             const target = event.target as HTMLInputElement;
             const file: Blob = target.files[0];
+            this._storage.detectFiles(target.files);
             if (file.type.includes('image/')) {
                 const filepath = `${this.user.uid}.png`;
                 const refs = ref(this.storage, filepath);
