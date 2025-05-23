@@ -11,6 +11,7 @@ import { filter, map, Subscription } from 'rxjs';
 @Component({
     selector: 'breadcrumb',
     templateUrl: './breadcrumb.component.html',
+    standalone: false
 })
 export class Breadcrumb implements OnInit, OnDestroy {
     pages: UrlSegment[] = [];

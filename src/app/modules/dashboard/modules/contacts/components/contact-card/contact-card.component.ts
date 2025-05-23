@@ -21,6 +21,7 @@ import { ContactService } from '../../services/contacts.service';
     selector: 'contact-card',
     templateUrl: './contact-card.component.html',
     styleUrls: ['./contact-card.component.scss'],
+    standalone: false
 })
 export class ContactCardComponent implements OnDestroy {
     @Input() item: Contact;

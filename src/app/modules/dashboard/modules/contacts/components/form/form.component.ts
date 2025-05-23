@@ -8,11 +8,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { CommonService } from 'src/app/services/common.service';
 import {
-    UntypedFormArray,
-    UntypedFormBuilder,
-    UntypedFormGroup,
     Validators,
     AbstractControl,
+    FormControl,
+    FormArray,
+    FormGroup,
+    FormBuilder,
 } from '@angular/forms';
 import { User } from '@angular/fire/auth';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -26,19 +27,32 @@ import {
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { Subscription } from 'rxjs';
 
+type Form = {
+    name: FormControl<string>;
+    contacts: FormArray<
+        FormGroup<{
+            email: FormControl<string>;
+            phone: FormControl<number | string>;
+        }>
+    >;
+    status: FormControl<Contactstatus>;
+    description: FormControl<string>;
+};
+
 @Component({
     selector: 'add-contact',
     templateUrl: './form.component.html',
+    standalone: false,
 })
 export class ContactFormPage implements OnInit, OnDestroy {
-    addContactForm: UntypedFormGroup;
+    addContactForm: FormGroup<Form>;
     statuses: Contactstatus[] = ['active', 'inactive'];
     subs: Subscription[] = [];
     user: User;
     constructor(
         private commonService: CommonService,
         private location: Location,
-        private fb: UntypedFormBuilder,
+        private fb: FormBuilder,
         private toastr: ToastService,
         private router: Router,
         private route: ActivatedRoute,
@@ -64,10 +78,10 @@ export class ContactFormPage implements OnInit, OnDestroy {
                 [shouldUnique(this.user.uid, 'name')],
             ],
             contacts: this.fb.array([this.createContactGroup()]),
-            status: ['active'],
+            status: ['active' as Contactstatus],
             description: ['', [Validators.required, descriptionValidator]],
-            id: Math.random(),
-            photoUrl: randomAvatarUrlGenerator(),
+            // id: Math.random(),
+            // photoUrl: randomAvatarUrlGenerator(),
         });
     }
 
@@ -94,7 +108,10 @@ export class ContactFormPage implements OnInit, OnDestroy {
     private createContactGroup(contact?: {
         email: string;
         phone: number;
-    }): UntypedFormGroup {
+    }): FormGroup<{
+        email: FormControl<string>;
+        phone: FormControl<number | string>;
+    }> {
         return this.fb.group({
             email: [
                 contact?.email || '',
@@ -107,8 +124,18 @@ export class ContactFormPage implements OnInit, OnDestroy {
         });
     }
 
-    get contacts(): UntypedFormArray {
-        return this.addContactForm.get('contacts') as UntypedFormArray;
+    get contacts(): FormArray<
+        FormGroup<{
+            email: FormControl<string>;
+            phone: FormControl<number | string>;
+        }>
+    > {
+        return this.addContactForm.get('contacts') as FormArray<
+            FormGroup<{
+                email: FormControl<string>;
+                phone: FormControl<number | string>;
+            }>
+        >;
     }
 
     get name(): AbstractControl {
@@ -122,12 +149,16 @@ export class ContactFormPage implements OnInit, OnDestroy {
     async submit(): Promise<void> {
         const contactData = this.addContactForm.value as Contact;
         try {
-            this.isEditMode
-                ? await this.contactService.updateContact(
-                      contactData.id,
-                      contactData
-                  )
-                : await this.contactService.addContact(contactData);
+            if (this.isEditMode) {
+                await this.contactService.updateContact(
+                    contactData.id,
+                    contactData
+                );
+            } else {
+                contactData.id = `${Math.random()}`;
+                contactData.photoUrl = randomAvatarUrlGenerator();
+                await this.contactService.addContact(contactData);
+            }
 
             this.router.navigate(['dashboard/contacts']);
             this.addContactForm.reset();

@@ -15,6 +15,7 @@ import { Subscription } from 'rxjs';
 @Component({
     selector: 'contacts-screen',
     templateUrl: './index.screen.html',
+    standalone: false
 })
 export class ContactsIndexScreen implements OnInit, OnDestroy {
     list: Contact[];

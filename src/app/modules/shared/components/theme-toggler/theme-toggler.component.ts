@@ -10,6 +10,7 @@ enum THEMES {
 @Component({
     selector: 'theme-toggler',
     templateUrl: './theme-toggler.component.html',
+    standalone: false
 })
 export class ThemeToggler implements OnDestroy {
     @Input() panelClass: string;

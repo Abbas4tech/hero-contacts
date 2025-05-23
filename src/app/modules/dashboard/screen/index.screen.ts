@@ -12,6 +12,7 @@ import { BrowserStorageService } from 'src/app/services/storage.service';
 @Component({
     selector: 'dashboard-screeen',
     templateUrl: './index.screen.html',
+    standalone: false
 })
 export class DashboardScreen implements OnDestroy {
     subscriptions: Subscription[] = [];
