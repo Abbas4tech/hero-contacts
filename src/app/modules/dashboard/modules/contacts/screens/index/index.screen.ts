@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs';
 @Component({
     selector: 'contacts-screen',
     templateUrl: './index.screen.html',
-    standalone: false
+    standalone: false,
 })
 export class ContactsIndexScreen implements OnInit, OnDestroy {
     list: Contact[];
@@ -36,9 +36,7 @@ export class ContactsIndexScreen implements OnInit, OnDestroy {
         if (this.subs) {
             this.subs.unsubscribe();
         }
-        setTimeout(() => {
-            this._common.updateTemplate(this.addContactTemplate);
-        });
+        this._common.updateTemplate(this.addContactTemplate);
         this.subs = this._contactService.getContacts().subscribe((data) => {
             this.list = data;
         });
