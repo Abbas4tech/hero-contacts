@@ -1,6 +1,7 @@
 import { LayoutService } from 'src/app/modules/dashboard/services/layout.service';
 import { CommonService } from 'src/app/services/common.service';
 import {
+    AfterViewInit,
     Component,
     OnDestroy,
     OnInit,
@@ -17,7 +18,7 @@ import { Subscription } from 'rxjs';
     templateUrl: './index.screen.html',
     standalone: false,
 })
-export class ContactsIndexScreen implements OnInit, OnDestroy {
+export class ContactsIndexScreen implements OnInit, OnDestroy, AfterViewInit {
     list: Contact[];
     subs: Subscription;
     isMultiSelected!: boolean;
@@ -36,7 +37,6 @@ export class ContactsIndexScreen implements OnInit, OnDestroy {
         if (this.subs) {
             this.subs.unsubscribe();
         }
-        this._common.updateTemplate(this.addContactTemplate);
         this.subs = this._contactService.getContacts().subscribe((data) => {
             this.list = data;
         });
@@ -51,6 +51,12 @@ export class ContactsIndexScreen implements OnInit, OnDestroy {
                 }
             })
         );
+    }
+
+    ngAfterViewInit(): void {
+        setTimeout(() => {
+            this._common.updateTemplate(this.addContactTemplate);
+        });
     }
 
     async deleteSelected(): Promise<void> {

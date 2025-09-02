@@ -15,7 +15,7 @@ import {
     getBlob,
 } from '@angular/fire/storage';
 import { StorageFile, Upload } from '../model/types';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 interface StorageState {
     files: StorageFile[];
@@ -28,9 +28,10 @@ interface StorageState {
 export class StorageService {
     private storage: FirebaseStorage = inject(Storage);
     private storageState = new BehaviorSubject<StorageState>(null);
+    private subscriptions: Subscription[] = [];
 
-    private selectedFiles: FileList;
-    basePath: string;
+    private selectedFiles!: FileList;
+    basePath!: string;
     readonly maxBucketSizeInBytes = 104857600; // 100MB
 
     currentUpload: BehaviorSubject<Upload> = new BehaviorSubject<Upload>(null);
@@ -39,9 +40,17 @@ export class StorageService {
         private _toastr: ToastService,
         private _auth: AuthService
     ) {
-        this._auth.user.subscribe((user) => {
-            this.basePath = user.email;
-        });
+        this.subscriptions.push(
+            this._auth.user.subscribe((user) => {
+                if (user) {
+                    this.basePath = user.email;
+                    this.loadStorageFiles(); // Load files for new user
+                } else {
+                    this.basePath = null;
+                    this.storageState.next({ files: [], totalConsumption: 0 }); // Reset state on logout
+                }
+            })
+        );
     }
 
     get storageState$() {
