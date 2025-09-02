@@ -9,7 +9,7 @@ import {
     ViewChild,
 } from '@angular/core';
 import { User } from '@angular/fire/auth';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AuthService } from 'src/app/modules/auth/services/auth.service';
@@ -21,7 +21,7 @@ import { ContactService } from '../../services/contacts.service';
     selector: 'contact-card',
     templateUrl: './contact-card.component.html',
     styleUrls: ['./contact-card.component.scss'],
-    standalone: false
+    standalone: false,
 })
 export class ContactCardComponent implements OnDestroy {
     @Input() item: Contact;
@@ -84,7 +84,7 @@ export class ContactCardComponent implements OnDestroy {
     private navigateWithStopPropagation(
         event: Event,
         commands: string[],
-        queryParams: object
+        queryParams: Params
     ): void {
         event.stopPropagation();
         this.router.navigate(commands, {
