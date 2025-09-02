@@ -37,6 +37,8 @@ type Form = {
     >;
     status: FormControl<Contactstatus>;
     description: FormControl<string>;
+    id: FormControl<string>;
+    photoUrl: FormControl<string>;
 };
 
 @Component({
@@ -80,8 +82,8 @@ export class ContactFormPage implements OnInit, OnDestroy {
             contacts: this.fb.array([this.createContactGroup()]),
             status: ['active' as Contactstatus],
             description: ['', [Validators.required, descriptionValidator]],
-            // id: Math.random(),
-            // photoUrl: randomAvatarUrlGenerator(),
+            id: `${Math.random()}`,
+            photoUrl: randomAvatarUrlGenerator(),
         });
     }
 
@@ -155,8 +157,6 @@ export class ContactFormPage implements OnInit, OnDestroy {
                     contactData
                 );
             } else {
-                contactData.id = `${Math.random()}`;
-                contactData.photoUrl = randomAvatarUrlGenerator();
                 await this.contactService.addContact(contactData);
             }
 
