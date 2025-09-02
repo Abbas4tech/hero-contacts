@@ -50,8 +50,8 @@
                         for="name"
                         [ngClass]="{
                             'text-error':
-                                phone.get('phone').errors &&
-                                phone.get('phone').touched,
+                                phone.get('phone')?.errors &&
+                                phone.get('phone')?.touched,
                         }"
                     >
                         {{ i + 1 }}) Phone :
@@ -61,15 +61,15 @@
                         formControlName="phone"
                         [ngClass]="{
                             'input-error':
-                                phone.get('phone').errors &&
-                                phone.get('phone').touched,
+                                phone.get('phone')?.errors &&
+                                phone.get('phone')?.touched,
                         }"
                         class="input-sm md:input-md input input-bordered w-full"
                     />
                     <section
                         *ngIf="
-                            phone.get('phone').errors &&
-                            phone.get('phone').touched
+                            phone.get('phone')?.errors &&
+                            phone.get('phone')?.touched
                         "
                         @fade
                     >
@@ -77,11 +77,13 @@
                             class="text-xs md:text-sm mt-2 text-error font-semibold"
                         >
                             <ng-container
-                                *ngIf="phone.get('phone').errors['required']"
+                                *ngIf="
+                                    phone?.get('phone')?.errors?.['required']
+                                "
                                 >Phone number is required</ng-container
                             >
                             <ng-container
-                                *ngIf="phone.get('phone').errors['pattern']"
+                                *ngIf="phone?.get('phone')?.errors?.['pattern']"
                                 >Phone number must of 10 digits</ng-container
                             >
                         </p>
@@ -93,8 +95,8 @@
                         for="name"
                         [ngClass]="{
                             'text-error':
-                                phone.get('email').errors &&
-                                phone.get('email').touched,
+                                phone.get('email')?.errors &&
+                                phone.get('email')?.touched,
                         }"
                     >
                         {{ i + 1 }}) Email :
@@ -104,15 +106,15 @@
                         formControlName="email"
                         [ngClass]="{
                             'input-error':
-                                phone.get('email').errors &&
-                                phone.get('email').touched,
+                                phone.get('email')?.errors &&
+                                phone.get('email')?.touched,
                         }"
                         class="input-sm md:input-md input input-bordered w-full"
                     />
                     <section
                         *ngIf="
-                            phone.get('email').errors &&
-                            phone.get('email').touched
+                            phone.get('email')?.errors &&
+                            phone.get('email')?.touched
                         "
                         @fade
                     >
@@ -120,11 +122,13 @@
                             class="md:text-sm text-xs mt-2 text-error font-semibold"
                         >
                             <ng-container
-                                *ngIf="phone.get('email').errors['required']"
+                                *ngIf="
+                                    phone?.get('email')?.errors?.['required']
+                                "
                                 >Email is required</ng-container
                             >
                             <ng-container
-                                *ngIf="phone.get('email').errors['pattern']"
+                                *ngIf="phone?.get('email')?.errors?.['pattern']"
                                 >Email is invalid</ng-container
                             >
                         </p>

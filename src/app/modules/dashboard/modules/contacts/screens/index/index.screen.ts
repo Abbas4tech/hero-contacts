@@ -19,13 +19,13 @@ import { Subscription } from 'rxjs';
     standalone: false,
 })
 export class ContactsIndexScreen implements OnInit, OnDestroy, AfterViewInit {
-    list: Contact[];
-    subs: Subscription;
+    list!: Contact[];
+    subs!: Subscription;
     isMultiSelected!: boolean;
     subscriptions: Subscription[] = [];
-    cards: CardStatus[];
+    cards!: CardStatus[];
     @ViewChild('addContactTemplate')
-    addContactTemplate: TemplateRef<HTMLElement[]>;
+    addContactTemplate!: TemplateRef<HTMLElement[]>;
     constructor(
         private _common: CommonService,
         private _layout: LayoutService,

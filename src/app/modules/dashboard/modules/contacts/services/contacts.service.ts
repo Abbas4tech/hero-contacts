@@ -21,14 +21,16 @@ import { ToastService } from 'src/app/services/toaster.service';
     providedIn: 'root',
 })
 export class ContactService {
-    private user: User;
+    private user!: User;
 
     constructor(
         private _auth: AuthService,
         private _firestore: Firestore,
         private _toastr: ToastService
     ) {
-        this._auth.user.subscribe((user) => (this.user = user));
+        this._auth.user.subscribe((user) => {
+            if (user) this.user = user;
+        });
     }
 
     getContacts(): Observable<Contact[]> {

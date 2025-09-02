@@ -32,7 +32,7 @@ type Form = {
     contacts: FormArray<
         FormGroup<{
             email: FormControl<string>;
-            phone: FormControl<number | string>;
+            phone: FormControl<string>;
         }>
     >;
     status: FormControl<Contactstatus>;
@@ -47,10 +47,11 @@ type Form = {
     standalone: false,
 })
 export class ContactFormPage implements OnInit, OnDestroy {
-    addContactForm: FormGroup<Form>;
+    addContactForm!: FormGroup<Form>;
     statuses: Contactstatus[] = ['active', 'inactive'];
     subs: Subscription[] = [];
-    user: User;
+    user!: User | null;
+
     constructor(
         private commonService: CommonService,
         private location: Location,
@@ -73,18 +74,26 @@ export class ContactFormPage implements OnInit, OnDestroy {
     }
 
     private initForm(): void {
+        if (!this.user) return;
         this.addContactForm = this.fb.group({
-            name: [
-                '',
-                [Validators.required],
-                this.isEditMode ? null : [shouldUnique(this.user.uid, 'name')],
-            ],
+            name: this.fb.control('', {
+                validators: [Validators.required],
+                asyncValidators: this.isEditMode
+                    ? []
+                    : [shouldUnique(this.user.uid, 'name')],
+            }),
             contacts: this.fb.array([this.createContactGroup()]),
-            status: ['active' as Contactstatus],
-            description: ['', [Validators.required, descriptionValidator]],
-            id: `${Math.random()}`,
-            photoUrl: randomAvatarUrlGenerator(),
-        });
+            status: this.fb.control<Contactstatus>(
+                'active',
+                Validators.required
+            ),
+            description: this.fb.control('', [
+                Validators.required,
+                descriptionValidator,
+            ]),
+            id: this.fb.control(`${Math.random()}`),
+            photoUrl: this.fb.control(randomAvatarUrlGenerator()),
+        }) as FormGroup<Form>;
     }
 
     ngOnDestroy(): void {
@@ -97,7 +106,10 @@ export class ContactFormPage implements OnInit, OnDestroy {
         data.contacts.forEach((contact) =>
             this.contacts.push(this.createContactGroup(contact))
         );
-        this.addContactForm.patchValue(data);
+        this.addContactForm.patchValue({
+            ...data,
+            contacts: [], // We've already handled contacts separately
+        });
     }
 
     get isEditMode(): boolean {
@@ -112,44 +124,57 @@ export class ContactFormPage implements OnInit, OnDestroy {
         phone: number;
     }): FormGroup<{
         email: FormControl<string>;
-        phone: FormControl<number | string>;
+        phone: FormControl<string>;
     }> {
         return this.fb.group({
-            email: [
-                contact?.email || '',
-                [Validators.required, Validators.email],
-            ],
-            phone: [
-                contact?.phone || '',
-                [Validators.required, Validators.pattern('[0-9]{10}')],
-            ],
-        });
+            email: this.fb.control(contact?.email || '', [
+                Validators.required,
+                Validators.email,
+            ]),
+            phone: this.fb.control(contact?.phone?.toString() || '', [
+                Validators.required,
+                Validators.pattern('[0-9]{10}'),
+            ]),
+        }) as FormGroup<{
+            email: FormControl<string>;
+            phone: FormControl<string>;
+        }>;
     }
 
     get contacts(): FormArray<
         FormGroup<{
             email: FormControl<string>;
-            phone: FormControl<number | string>;
+            phone: FormControl<string>;
         }>
     > {
         return this.addContactForm.get('contacts') as FormArray<
             FormGroup<{
                 email: FormControl<string>;
-                phone: FormControl<number | string>;
+                phone: FormControl<string>;
             }>
         >;
     }
 
     get name(): AbstractControl {
-        return this.addContactForm.get('name');
+        return this.addContactForm.get('name')!;
     }
 
     get description(): AbstractControl {
-        return this.addContactForm.get('description');
+        return this.addContactForm.get('description')!;
     }
 
     async submit(): Promise<void> {
-        const contactData = this.addContactForm.value as Contact;
+        if (this.addContactForm.invalid) return;
+
+        const formValue = this.addContactForm.value;
+        const contactData: Contact = {
+            ...formValue,
+            contacts: formValue.contacts!.map((contact) => ({
+                email: contact.email!,
+                phone: parseInt(contact.phone!, 10),
+            })),
+        } as Contact;
+
         try {
             if (this.isEditMode) {
                 await this.contactService.updateContact(

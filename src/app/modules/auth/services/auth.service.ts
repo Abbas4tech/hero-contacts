@@ -27,7 +27,7 @@ import { errorGenerator, randomAvatarUrlGenerator } from './../utils/auth.util';
     providedIn: 'root',
 })
 export class AuthService {
-    user: BehaviorSubject<User> = new BehaviorSubject<User>(null);
+    user: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
 
     constructor(
         private auth: Auth,
@@ -61,7 +61,7 @@ export class AuthService {
             this.setUser(userCreds.user, `Logged In as ${fullname}`);
             this.router.navigate(['dashboard/contacts']);
         } catch (err) {
-            this.handleAuthError(err);
+            this.handleAuthError(err as FirebaseError);
         }
     }
 

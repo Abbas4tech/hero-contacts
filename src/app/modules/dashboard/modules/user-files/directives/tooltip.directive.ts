@@ -9,10 +9,10 @@ import {
 
 @Directive({
     selector: '[data-tip]',
-    standalone: false
+    standalone: false,
 })
 export class TooltipDirective implements OnChanges {
-    @Input('data-tip') tooltipText: string;
+    @Input('data-tip') tooltipText: string = '';
 
     constructor(
         private el: ElementRef,

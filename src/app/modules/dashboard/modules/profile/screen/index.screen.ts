@@ -21,6 +21,7 @@ import {
     FormControl,
     FormGroup,
     FormBuilder,
+    Validators,
 } from '@angular/forms';
 
 import { noSpace } from '../../contacts/validators/validators';
@@ -36,12 +37,12 @@ import { StorageService } from '../../user-files/services/storage.service';
 })
 export class IndexProfileScreen implements OnDestroy {
     suscriptions: Subscription[] = [];
-    @ViewChild('fileInput') fileInput: ElementRef<HTMLInputElement>;
-    percentage: number;
-    user: User;
+    @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+    percentage!: number;
+    user!: User;
     private storage: FirebaseStorage = inject(Storage);
     updateForm: FormGroup<{ username: FormControl<string> }>;
-    isLoading: boolean;
+    isLoading!: boolean;
 
     constructor(
         private _auth: AuthService,
@@ -52,21 +53,33 @@ export class IndexProfileScreen implements OnDestroy {
         private _storage: StorageService
     ) {
         this._common.setTitle('Profile');
+
+        this.updateForm = this._fb.nonNullable.group({
+            username: [this.user?.displayName || '', [noSpace]],
+        });
+
         this.suscriptions.push(
             this._auth.user.subscribe((user) => {
-                this.user = user;
+                // Update form value when user data is available
+                if (user) {
+                    this.user = user;
+                    this.updateForm.patchValue({
+                        username: user.displayName || '',
+                    });
+                }
             })
         );
-        this.updateForm = this._fb.group({
-            username: new FormControl(this.user.displayName, [noSpace]),
-        });
     }
+
     selectFile(): void {
         this.fileInput.nativeElement.click();
     }
+
     async uploadprofile(event: Event) {
+        if (!this._auth.user.value) return;
         try {
             const target = event.target as HTMLInputElement;
+            if (!target.files || !this.user) return;
             const file: Blob = target.files[0];
             this._storage.detectFiles(target.files);
             if (file.type.includes('image/')) {
@@ -89,6 +102,7 @@ export class IndexProfileScreen implements OnDestroy {
                         const url = await getDownloadURL(
                             uploadTask.snapshot.ref
                         );
+                        if (!this._auth.user.value) return;
                         await updateProfile(this._auth.user.value, {
                             photoURL: url,
                         });
@@ -100,17 +114,18 @@ export class IndexProfileScreen implements OnDestroy {
             }
         } catch (err) {
             console.error(err);
-            this._toastr.error(err);
+            this._toastr.error(err as string);
         }
     }
 
     async deleteUser() {
+        if (!this.user) return;
         await deleteUser(this.user);
         this._location.back();
     }
 
     async submitForm(): Promise<void> {
-        if (!this.updateForm.valid) {
+        if (!this.updateForm.valid || !this._auth.user.value) {
             return;
         }
         try {
@@ -133,8 +148,9 @@ export class IndexProfileScreen implements OnDestroy {
     }
 
     get username(): AbstractControl {
-        return this.updateForm.get('username');
+        return this.updateForm.get('username')!;
     }
+
     ngOnDestroy(): void {
         this.suscriptions.forEach((sub) => sub.unsubscribe());
     }

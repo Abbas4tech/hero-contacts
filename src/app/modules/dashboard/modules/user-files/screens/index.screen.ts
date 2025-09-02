@@ -17,16 +17,16 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
     selector: 'hero-drive',
     templateUrl: './index.screen.html',
-    standalone: false
+    standalone: false,
 })
 export class UserFilesScreen implements OnInit, OnDestroy, AfterViewInit {
     files: StorageFile[] = [];
     private destroy$ = new Subject<void>();
-    @ViewChild('fileInput') fileElement: ElementRef<HTMLInputElement>;
-    @ViewChild('dialog') dialog: ElementRef<HTMLDialogElement>;
+    @ViewChild('fileInput') fileElement!: ElementRef<HTMLInputElement>;
+    @ViewChild('dialog') dialog!: ElementRef<HTMLDialogElement>;
     @ViewChild('uploadTemplate')
-    uploadTemplate: TemplateRef<HTMLElement[]>;
-    currentUpload: Upload;
+    uploadTemplate!: TemplateRef<HTMLElement[]>;
+    currentUpload!: Upload;
     constructor(
         private _uploadService: StorageService,
         private _common: CommonService,
@@ -49,6 +49,7 @@ export class UserFilesScreen implements OnInit, OnDestroy, AfterViewInit {
         this._uploadService.currentUpload
             .pipe(takeUntil(this.destroy$))
             .subscribe((val) => {
+                if (!val) return;
                 this.currentUpload = val;
                 if (val) this.dialog.nativeElement.showModal();
                 this._changeRef.detectChanges();

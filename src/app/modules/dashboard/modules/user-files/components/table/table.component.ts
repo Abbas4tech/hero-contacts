@@ -8,11 +8,11 @@ import { BrowserStorageService } from 'src/app/services/storage.service';
 @Component({
     selector: 'files-table',
     templateUrl: './table.component.html',
-    standalone: false
+    standalone: false,
 })
 export class FilesTable implements OnInit, OnDestroy {
     files: StorageFile[] = [];
-    subs: Subscription;
+    subs: Subscription = new Subscription();
     showConsent = true;
     private destroy$ = new Subject<void>();
     constructor(

@@ -12,13 +12,13 @@ import { BrowserStorageService } from 'src/app/services/storage.service';
 @Component({
     selector: 'dashboard-screeen',
     templateUrl: './index.screen.html',
-    standalone: false
+    standalone: false,
 })
 export class DashboardScreen implements OnDestroy {
     subscriptions: Subscription[] = [];
-    loggedInUser: User;
-    profilePic: string;
-    contentLoaded: boolean;
+    loggedInUser!: User;
+    profilePic: string = '';
+    contentLoaded: boolean = false;
 
     constructor(
         private _common: CommonService,
@@ -32,7 +32,7 @@ export class DashboardScreen implements OnDestroy {
         this._secService.setSeoData();
         this.subscriptions.push(
             this._auth.user.subscribe((user) => {
-                this.loggedInUser = user;
+                if (user) this.loggedInUser = user;
             }),
 
             this._router.events.subscribe((event) => {
