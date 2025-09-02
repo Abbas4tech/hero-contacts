@@ -6,17 +6,14 @@ import {
     getFirestore,
 } from '@angular/fire/firestore';
 import {
-    UntypedFormControl,
     ValidationErrors,
     ValidatorFn,
     AbstractControl,
     AsyncValidatorFn,
 } from '@angular/forms';
 
-export const descriptionValidator = (
-    control: UntypedFormControl
-): ValidationErrors => {
-    const description = <string>control.value;
+export const descriptionValidator: ValidatorFn = (control: AbstractControl) => {
+    const description = control.value as string;
     if (description && description.split(' ').length >= 5) {
         return null;
     } else {
@@ -26,10 +23,9 @@ export const descriptionValidator = (
     }
 };
 
-export const noSpace: ValidatorFn = (
-    control: UntypedFormControl
-): ValidationErrors => {
-    const isWhitespace = (control.value || '').trim().length === 0;
+export const noSpace: ValidatorFn = (control: AbstractControl) => {
+    const value = control.value as string;
+    const isWhitespace = (value || '').trim().length === 0;
     const isValid = !isWhitespace;
     return isValid ? null : { whitespace: true };
 };
@@ -38,8 +34,8 @@ export function shouldUnique(
     collectionPath: string,
     controlName: string
 ): AsyncValidatorFn {
-    return (control: AbstractControl): Promise<ValidationErrors> => {
-        return new Promise<ValidationErrors>((resolve, reject) => {
+    return (control: AbstractControl): Promise<ValidationErrors | null> => {
+        return new Promise<ValidationErrors | null>((resolve, reject) => {
             if (!control.value) {
                 return resolve(null);
             }
@@ -52,12 +48,12 @@ export function shouldUnique(
                     else
                         resolve({
                             nonUnique: {
-                                message: `${control.value} already exist, Please choose a different name.`,
+                                message: `${control.value} already exists. Please choose a different name.`,
                             },
                         });
                 } catch (err) {
                     console.error(err);
-                    reject(err.message);
+                    reject(err);
                 }
             }, 1000);
         });

@@ -21,7 +21,7 @@ import { FirebaseError } from '@angular/fire/app';
     selector: 'index',
     templateUrl: './index.component.html',
     providers: [AuthService],
-    standalone: false
+    standalone: false,
 })
 export class IndexComponent implements OnInit, OnDestroy {
     isSignUp = true;
@@ -76,15 +76,15 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
 
     get email(): AbstractControl {
-        return this.authForm.get('email');
+        return this.authForm.get('email')!;
     }
 
     get password(): AbstractControl {
-        return this.authForm.get('password');
+        return this.authForm.get('password')!;
     }
 
     get name(): AbstractControl {
-        return this.authForm.get('name');
+        return this.authForm.get('name')!;
     }
 
     signInWithGoogle(): void {
@@ -138,7 +138,7 @@ export class IndexComponent implements OnInit, OnDestroy {
             await this.authService.signUp(name, email, password);
             this.authForm.reset();
         } catch (err) {
-            this.handleError(err);
+            this.handleError(err as FirebaseError);
         }
     }
 

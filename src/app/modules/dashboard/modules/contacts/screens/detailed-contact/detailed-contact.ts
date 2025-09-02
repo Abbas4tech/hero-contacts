@@ -7,10 +7,10 @@ import { CommonService } from 'src/app/services/common.service';
     selector: 'detailed-view',
     templateUrl: './detailed-contact.html',
     animations: [],
-    standalone: false
+    standalone: false,
 })
 export class DetailedContactScreen implements OnInit {
-    contact: Contact;
+    contact!: Contact;
     constructor(
         public _route: ActivatedRoute,
         private _common: CommonService

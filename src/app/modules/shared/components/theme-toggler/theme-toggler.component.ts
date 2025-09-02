@@ -10,11 +10,11 @@ enum THEMES {
 @Component({
     selector: 'theme-toggler',
     templateUrl: './theme-toggler.component.html',
-    standalone: false
+    standalone: false,
 })
 export class ThemeToggler implements OnDestroy {
-    @Input() panelClass: string;
-    theme: Theme;
+    @Input() panelClass: string = '';
+    theme: Theme = THEMES.LIGHT;
     commonEnum = THEMES;
     subscriptions: Subscription[] = [];
     constructor(private _common: CommonService) {

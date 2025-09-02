@@ -16,14 +16,14 @@ import { Location } from '@angular/common';
 @Component({
     selector: 'file-details',
     templateUrl: './details.screen.html',
-    standalone: false
+    standalone: false,
 })
 export class FileDetailsScreen implements OnInit, OnDestroy, AfterViewInit {
-    link: string;
-    meta: FullMetadata;
-    downloadUrl: string;
+    link: string = '';
+    meta!: FullMetadata;
+    downloadUrl: string = '';
 
-    @ViewChild('detailsTemplate') detailsTemplate: TemplateRef<HTMLElement[]>;
+    @ViewChild('detailsTemplate') detailsTemplate!: TemplateRef<HTMLElement[]>;
 
     constructor(
         private _activeRoute: ActivatedRoute,

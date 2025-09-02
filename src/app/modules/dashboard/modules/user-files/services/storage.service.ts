@@ -27,14 +27,18 @@ interface StorageState {
 })
 export class StorageService {
     private storage: FirebaseStorage = inject(Storage);
-    private storageState = new BehaviorSubject<StorageState>(null);
+    private storageState = new BehaviorSubject<StorageState>({
+        files: [],
+        totalConsumption: 0,
+    });
     private subscriptions: Subscription[] = [];
 
     private selectedFiles!: FileList;
-    basePath!: string;
+    basePath: string | null = null;
     readonly maxBucketSizeInBytes = 104857600; // 100MB
 
-    currentUpload: BehaviorSubject<Upload> = new BehaviorSubject<Upload>(null);
+    currentUpload: BehaviorSubject<Upload | null> =
+        new BehaviorSubject<Upload | null>(null);
 
     constructor(
         private _toastr: ToastService,
@@ -59,6 +63,7 @@ export class StorageService {
 
     async loadStorageFiles(): Promise<void> {
         try {
+            if (!this.basePath) return;
             const reference = ref(this.storage, this.basePath);
             const list = await listAll(reference);
             const files = await Promise.all(
@@ -70,7 +75,7 @@ export class StorageService {
                 0
             );
             this.storageState.next({ files, totalConsumption });
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
             this._toastr.error(`Error loading files: ${error.message}`);
         }
@@ -118,9 +123,11 @@ export class StorageService {
         return this.formatBytes(this.maxBucketSizeInBytes);
     }
 
-    checkIfBucketHasStorageCapacity(sizeToUplaod: number) {
-        const currentConsumption =
-            this.storageState.getValue().totalConsumption;
+    checkIfBucketHasStorageCapacity(sizeToUplaod: number): boolean {
+        const currentState = this.storageState.getValue();
+        const currentConsumption = currentState
+            ? currentState.totalConsumption
+            : 0;
         const availableSize = this.maxBucketSizeInBytes - currentConsumption;
         return availableSize >= sizeToUplaod;
     }
@@ -146,14 +153,15 @@ export class StorageService {
     private pushUpload(upload: File): void {
         const fileRef = ref(this.storage, `${this.basePath}/${upload.name}`);
         const uploadTask = uploadBytesResumable(fileRef, upload);
-        this.currentUpload.next({
-            ...this.currentUpload.getValue(),
+        const newUpload: Upload = {
             $key: upload.name,
             createdAt: new Date(),
             file: upload,
             name: upload.name,
             url: fileRef.fullPath,
-        });
+            progress: 0,
+        };
+        this.currentUpload.next(newUpload);
         this.handleUploadState(uploadTask);
     }
 
@@ -161,26 +169,33 @@ export class StorageService {
         uploadTask.on(
             'state_changed',
             (snapshot) => {
-                this.currentUpload.next({
-                    ...this.currentUpload.getValue(),
-                    progress: Math.round(
-                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                    ),
-                });
+                const currentUpload = this.currentUpload.getValue();
+                if (currentUpload) {
+                    this.currentUpload.next({
+                        ...currentUpload,
+                        progress: Math.round(
+                            (snapshot.bytesTransferred / snapshot.totalBytes) *
+                                100
+                        ),
+                    });
+                }
             },
             (error) => {
                 console.error('Upload failed:', error);
                 this._toastr.error(error.message);
             },
             async () => {
-                this.currentUpload.next({
-                    ...this.currentUpload.getValue(),
-                    url: await getDownloadURL(uploadTask.snapshot.ref),
-                });
-                await this.loadStorageFiles();
-                this._toastr.success(
-                    `Successfully uploaded ${this.currentUpload.getValue().name}!`
-                );
+                const currentUpload = this.currentUpload.getValue();
+                if (currentUpload) {
+                    this.currentUpload.next({
+                        ...currentUpload,
+                        url: await getDownloadURL(uploadTask.snapshot.ref),
+                    });
+                    await this.loadStorageFiles();
+                    this._toastr.success(
+                        `Successfully uploaded ${currentUpload.name}!`
+                    );
+                }
                 this.currentUpload.next(null);
             }
         );
@@ -191,7 +206,7 @@ export class StorageService {
         try {
             await deleteObject(storageRef);
             this._toastr.success(`Deleted ${storageRef.name} Successfully!`);
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
             this._toastr.error(`Failed to delete ${storageRef.name}`);
         } finally {

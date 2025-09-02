@@ -24,11 +24,11 @@ import { ContactService } from '../../services/contacts.service';
     standalone: false,
 })
 export class ContactCardComponent implements OnDestroy {
-    @Input() item: Contact;
+    @Input() item!: Contact;
     @Output() onCheck = new EventEmitter<CardStatus>();
     @ViewChild('multiSelectCheckbox')
-    multiSelectCheckbox: ElementRef<HTMLInputElement>;
-    user: User;
+    multiSelectCheckbox!: ElementRef<HTMLInputElement>;
+    user!: User;
     private readonly destroy$ = new Subject<void>();
 
     isMultiSelected = false;
@@ -48,7 +48,7 @@ export class ContactCardComponent implements OnDestroy {
         this.authService.user
             .pipe(takeUntil(this.destroy$))
             .subscribe((user) => {
-                this.user = user;
+                if (user) this.user = user;
             });
     }
 
@@ -62,6 +62,7 @@ export class ContactCardComponent implements OnDestroy {
     }
 
     detailed(id: string, event: Event): void {
+        if (!this.user) return;
         this.navigateWithStopPropagation(event, ['details'], {
             id,
             uid: this.user.uid,
@@ -69,6 +70,7 @@ export class ContactCardComponent implements OnDestroy {
     }
 
     edit(id: string, event: Event): void {
+        if (!this.user) return;
         this.navigateWithStopPropagation(event, ['edit-contact'], {
             [ContactsQueryParams.MODE]: ContactsQueryParams.EDIT,
             id,

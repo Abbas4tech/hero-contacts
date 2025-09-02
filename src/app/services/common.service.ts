@@ -10,9 +10,9 @@ import { DOCUMENT } from '@angular/common';
 })
 export class CommonService {
     theme: BehaviorSubject<Theme> = new BehaviorSubject<Theme>('light');
-    private templateSource = new BehaviorSubject<TemplateRef<HTMLElement[]>>(
-        null
-    );
+    private templateSource = new BehaviorSubject<TemplateRef<
+        HTMLElement[]
+    > | null>(null);
     currentTemplate = this.templateSource.asObservable();
     constructor(
         private _title: Title,
@@ -31,7 +31,7 @@ export class CommonService {
         }
     }
 
-    updateTemplate(template: TemplateRef<HTMLElement[]>) {
+    updateTemplate(template: TemplateRef<HTMLElement[]> | null) {
         this.templateSource.next(template);
     }
 }

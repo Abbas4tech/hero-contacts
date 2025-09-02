@@ -17,6 +17,7 @@ export class CanActivateEditForm implements CanActivate {
     async canActivate(route: ActivatedRouteSnapshot): Promise<boolean> {
         const id = route.queryParams['id'];
         const userId = this._browserStorage.get('userId');
+        if (!userId) return false;
         const mode = route.queryParams['mode'];
         if (mode === ContactsQueryParams.EDIT) {
             const res = await getDoc(doc(this._fire, userId, id)).then(

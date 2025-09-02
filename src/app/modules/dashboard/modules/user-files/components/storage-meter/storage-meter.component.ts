@@ -28,7 +28,7 @@ import { Subject, Subscription, takeUntil } from 'rxjs';
             ></progress>
         </div>
     `,
-    standalone: false
+    standalone: false,
 })
 export class StorageMeter implements OnInit, OnDestroy {
     currentConsumption = 0;
@@ -37,14 +37,14 @@ export class StorageMeter implements OnInit, OnDestroy {
     );
     maxBucketConsumptionInFormat = this._storageService.maxBucketSizeInFormat;
     percentageConsumption = 0;
-    subs: Subscription;
+    subs: Subscription = new Subscription();
 
     private destroy$ = new Subject<void>();
 
     constructor(private _storageService: StorageService) {}
 
     ngOnInit(): void {
-        this._storageService.storageState$
+        this.subs = this._storageService.storageState$
             .pipe(takeUntil(this.destroy$))
             .subscribe((state) => {
                 if (state.totalConsumption !== this.currentConsumption) {
