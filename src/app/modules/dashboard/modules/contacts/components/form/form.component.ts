@@ -75,7 +75,7 @@ export class ContactFormPage implements OnInit, OnDestroy {
             name: [
                 '',
                 [Validators.required],
-                [shouldUnique(this.user.uid, 'name')],
+                this.isEditMode ? null : [shouldUnique(this.user.uid, 'name')],
             ],
             contacts: this.fb.array([this.createContactGroup()]),
             status: ['active' as Contactstatus],
